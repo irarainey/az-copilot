@@ -1,15 +1,20 @@
 [tool.poetry]
-name = "src"
+name = "az-cli-copilot"
 version = "0.1.0"
-description = ""
+description = "Azure CLI Copilot"
 authors = ["Ira Rainey <ira.rainey@microsoft.com>"]
 readme = "README.md"
+packages = [{include = "az-cli-copilot", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
 click = "^8.1.7"
 azure-identity = "^1.14.0"
+dependency-injector = "^4.41.0"
 python-dotenv = "^1.0.0"
+langchain = "^0.0.286"
+tiktoken = "^0.4.0"
+azure-search-documents = "11.4.0b8"
 semantic-kernel = "0.3.13.dev"
 asyncio = "^3.4.3"
 
@@ -20,4 +25,5 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.scripts]
-cp = "commands:cli"
+azcp = "src.app.cli.commands:cli"
+
