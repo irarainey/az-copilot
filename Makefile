@@ -20,3 +20,11 @@ build: ## 🤖 Build the project
 clean: ## 🤖 Clean all caches and update packages
 	@figlet $@ || true
 	@py3clean . && rm -rf dist && poetry update
+
+install: ## 🤖 Install dependencies
+	@figlet $@ || true
+	@rm -f poetry.lock && poetry install
+
+all:
+	@figlet $@ || true
+	@make clean && make install && make build

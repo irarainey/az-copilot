@@ -1,10 +1,10 @@
 from dependency_injector import containers, providers
-from src.infrastructure import AzureAuthenticationService, AzureOpenAIClient
-from src.infrastructure.services.azure_cli_command_execution_service import (
+from azext_copilot.infrastructure import AzureAuthenticationService, AzureOpenAIClient
+from azext_copilot.infrastructure.services.azure_cli_command_execution_service import (
     AzureCliCommandExecution,
 )
-from src.services import EnvironmentContextService
-from src.services import ConversationEngine
+from azext_copilot.services import EnvironmentContextService
+from azext_copilot.services import ConversationEngine
 
 
 def setup_dependency_container(modules=None, packages=None):

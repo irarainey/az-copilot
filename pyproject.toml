@@ -4,7 +4,6 @@ version = "0.1.0"
 description = "Azure CLI Copilot"
 authors = ["Ira Rainey <ira.rainey@microsoft.com>"]
 readme = "README.md"
-packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.9"
@@ -21,4 +20,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-copilot = "src.main:cli"
+copilot = "azext_copilot.__init__:cli"

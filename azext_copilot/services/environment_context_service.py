@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from src.domain import constants
+from azext_copilot.domain import constants
 
 
 class EnvironmentContextService:

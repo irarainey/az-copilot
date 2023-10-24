@@ -1,7 +1,7 @@
 import click
 import asyncio
 from functools import wraps
-from src.dependency_container import setup_dependency_container
+from azext_copilot.dependency_container import setup_dependency_container
 
 container = setup_dependency_container()
 

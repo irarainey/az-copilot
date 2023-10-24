@@ -1,6 +1,6 @@
 import json
 import ast
-from src.domain import constants
+from azext_copilot.domain import constants
 
 
 class ConversationEngine:
