@@ -17,6 +17,6 @@ build: ## 🤖 Build the project
 	@figlet $@ || true
 	@poetry build
 
-clean: ## 🤖 Clean all caches
+clean: ## 🤖 Clean all caches and update packages
 	@figlet $@ || true
 	@py3clean . && rm -rf dist && poetry update
