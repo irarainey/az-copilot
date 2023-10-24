@@ -4,7 +4,6 @@ from src.domain import constants
 
 
 class EnvironmentContextService:
-
     def load_environment(self):
         load_dotenv()
 
@@ -15,10 +14,11 @@ class EnvironmentContextService:
         os.environ["OPENAI_API_TYPE"] = "azure"
         os.environ["OPENAI_API_BASE"] = self.azure_open_ai_url
         os.environ["OPENAI_API_VERSION"] = "2023-05-15"
-        os.environ["AZURE_OPENAI_DEPLOYMENT_NAME"] = self.azure_open_ai_gpt_deployment_name
+        os.environ[
+            "AZURE_OPENAI_DEPLOYMENT_NAME"
+        ] = self.azure_open_ai_gpt_deployment_name
 
     def environment_valid(self) -> bool:
-
         if not os.environ.get(constants.AZURE_COGNITIVE_SEARCH_KEY):
             return False
 

@@ -2,7 +2,6 @@ import subprocess
 
 
 class AzureCliCommandExecution:
-
     def execute(self, command):
         try:
             completed_process = subprocess.run(

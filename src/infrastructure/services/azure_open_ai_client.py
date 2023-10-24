@@ -10,17 +10,18 @@ from semantic_kernel.connectors.ai.open_ai import (
 
 class AzureOpenAIClient:
     def __init__(
-            self,
-            api_key,
-            api_base,
-            open_ai_text_embedding_deployment_name,
-            open_ai_gpt_deployment_name,
-            search_endpoint,
-            search_key
+        self,
+        api_key,
+        api_base,
+        open_ai_text_embedding_deployment_name,
+        open_ai_gpt_deployment_name,
+        search_endpoint,
+        search_key,
     ):
         self.vector_size = 1536
-        self.open_ai_text_embedding_deployment_name = \
+        self.open_ai_text_embedding_deployment_name = (
             open_ai_text_embedding_deployment_name
+        )
         self.open_ai_gpt_deployment_name = open_ai_gpt_deployment_name
         self.kernel = semantic_kernel.Kernel()
 
@@ -45,7 +46,8 @@ class AzureOpenAIClient:
         self.kernel.register_memory_store(memory_store=connector)
 
         self.kernel.add_chat_service(
-            "dv", AzureChatCompletion(self.open_ai_gpt_deployment_name, endpoint, api_key)
+            "dv",
+            AzureChatCompletion(self.open_ai_gpt_deployment_name, endpoint, api_key),
         )
 
     async def send_message(self, input, history=None):
@@ -87,7 +89,7 @@ class AzureOpenAIClient:
             for i in range(len(history[:-1])):
                 if i % 2 == 0:
                     q = history[i]
-                    a = history[i+1]
+                    a = history[i + 1]
                     history_message += f"\n{q}\n{a}\n"
 
         context = self.kernel.create_new_context()

@@ -15,9 +15,7 @@ class ConversationEngine:
         self.chat_history = [("q", prompt)]
 
         # get openAI response
-        response = await self.azure_open_ai_client_service.send_message(
-            prompt
-        )
+        response = await self.azure_open_ai_client_service.send_message(prompt)
         response = json.loads(response.result.strip(""))
         self.chat_history.append(("a", response))
         return response
@@ -30,10 +28,7 @@ class ConversationEngine:
         history = [x[1] for x in self.chat_history]
 
         # get openAI response
-        response = await self.azure_open_ai_client_service.send_message(
-            prompt,
-            history
-        )
+        response = await self.azure_open_ai_client_service.send_message(prompt, history)
 
         r = ast.literal_eval(response.result)
         # awful piece of code
@@ -58,10 +53,7 @@ class ConversationEngine:
         history = [x[1] for x in self.chat_history]
 
         # get openAI response
-        response = await self.azure_open_ai_client_service.send_message(
-            prompt,
-            history
-        )
+        response = await self.azure_open_ai_client_service.send_message(prompt, history)
 
         r = ast.literal_eval(response.result)
         # awful piece of code

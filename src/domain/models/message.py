@@ -1,5 +1,4 @@
 class Message:
-
     def __init__(self, role, message=None, message_type=None):
         self._role = role
         self._message = message
@@ -27,5 +26,6 @@ class Message:
 
     def to_dict(self):
         return {
-            "role": self._role.value, "content": self._message,
+            "role": self._role.value,
+            "content": self._message,
         }

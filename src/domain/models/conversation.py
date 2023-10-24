@@ -13,7 +13,6 @@ class MessageEncoder(json.JSONEncoder):
 
 
 class Conversation:
-
     def __init__(self, messages: list[Message] = None):
         self._messages = []
 
@@ -22,7 +21,6 @@ class Conversation:
                 self.add_message(message)
 
     def add_message(self, message: Message):
-
         if self._messages is None:
             self._messages = []
 
@@ -30,7 +28,4 @@ class Conversation:
 
     @property
     def messages(self):
-        return [
-            message.to_dict() for message in self._messages
-        ]
-
+        return [message.to_dict() for message in self._messages]

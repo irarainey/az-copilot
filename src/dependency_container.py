@@ -1,7 +1,8 @@
 from dependency_injector import containers, providers
-from src.infrastructure import AzureAuthenticationService, \
-    AzureOpenAIClient
-from src.infrastructure.services.azure_cli_command_execution_service import AzureCliCommandExecution
+from src.infrastructure import AzureAuthenticationService, AzureOpenAIClient
+from src.infrastructure.services.azure_cli_command_execution_service import (
+    AzureCliCommandExecution,
+)
 from src.services import EnvironmentContextService
 from src.services import ConversationEngine
 
@@ -52,12 +53,9 @@ class DependencyContainer(containers.DeclarativeContainer):
         search_endpoint=config.azure_cognitive_search_url,
         search_key=config.azure_cognitive_search_key,
         open_ai_text_embedding_deployment_name=config.azure_open_ai_embedding_deployment_name,
-        open_ai_gpt_deployment_name=config.azure_open_ai_gpt_deployment_name
+        open_ai_gpt_deployment_name=config.azure_open_ai_gpt_deployment_name,
     )
     conversation_engine = providers.Factory(
-        ConversationEngine,
-        open_ai_service=azure_open_ai_client_service
+        ConversationEngine, open_ai_service=azure_open_ai_client_service
     )
-    execution_service = providers.Factory(
-        AzureCliCommandExecution
-    )
+    execution_service = providers.Factory(AzureCliCommandExecution)
