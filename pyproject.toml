@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "az-cli-copilot"
+name = "azext_copilot"
 version = "0.1.0"
 description = "Azure CLI Copilot"
 authors = ["Ira Rainey <ira.rainey@microsoft.com>"]
