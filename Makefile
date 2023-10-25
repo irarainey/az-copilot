@@ -30,5 +30,4 @@ deploy: ## 🤖 Deploy the project locally
 	@make build && pip install dist/*.whl --force-reinstall
 
 all: ## 🤖 Run all the steps together
-	@figlet $@ || true
 	@make clean && make install && make deploy
