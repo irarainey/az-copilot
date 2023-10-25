@@ -13,10 +13,6 @@ ifeq ($(filter $(MAKECMDGOALS),config clean),)
 	endif
 endif
 
-build: ## 🤖 Build the project
-	@figlet $@ || true
-	@poetry build --format wheel
-
 clean: ## 🤖 Clean all caches and update packages
 	@figlet $@ || true
 	@py3clean . && rm -rf dist && poetry update
@@ -25,6 +21,14 @@ install: ## 🤖 Install dependencies
 	@figlet $@ || true
 	@rm -f poetry.lock && poetry install
 
-all:
+build: ## 🤖 Build the project
 	@figlet $@ || true
-	@make clean && make install && make build
+	@poetry build --format wheel
+
+deploy: ## 🤖 Deploy the project locally
+	@figlet $@ || true
+	@make build && pip install dist/*.whl --force-reinstall
+
+all: ## 🤖 Run all the steps together
+	@figlet $@ || true
+	@make clean && make install && make deploy
