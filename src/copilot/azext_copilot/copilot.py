@@ -28,6 +28,7 @@ async def copilot(prompt):
         openai_embedding_deployment,
         cognitive_search_api_key,
         cognitive_search_endpoint,
+        autorun,
     ) = configuration()
 
     # Determine if configuration is default
@@ -76,14 +77,14 @@ async def copilot(prompt):
 
         response = await engine.send_prompt(prompt)
 
-    # click.echo("\nNo problems detected with your prompt:")
-    # click.echo(f"\tCommand: {response['command']}")
-    # click.echo(f"\tExplanation: {response['explanation']}")
-
-    # final prompt
-    # execute = click.confirm("\nDo you want to execute this command?")
-    # if execute:
-    # click.echo(f"\nExecuting command: {response['command']}")
-    print(f"\n{execute(response['command'])}")
-    # else:
-    #    click.echo("Ending conversation.")
+    if autorun:
+        click.echo(f"\n{execute(response['command'])}")
+    else:
+        click.echo(f"\nCommand: {response['command']}")
+        click.echo(f"Explanation: {response['explanation']}")
+        run_command = click.confirm("\nDo you want to execute this command?")
+        if run_command:
+            click.echo(f"\nExecuting command: {response['command']}")
+            click.echo(f"\n{execute(response['command'])}")
+        else:
+            click.echo("Command not executed.")

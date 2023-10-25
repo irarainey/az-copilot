@@ -35,6 +35,7 @@ def configuration():
             ]
             cognitive_search_api_key = config["AzureCognitiveSearch"]["ApiKey"]
             cognitive_search_endpoint = config["AzureCognitiveSearch"]["Endpoint"]
+            autorun = config["Copilot"]["AutoRun"]
 
             return (
                 openai_api_key,
@@ -43,6 +44,7 @@ def configuration():
                 openai_embedding_deployment,
                 cognitive_search_api_key,
                 cognitive_search_endpoint,
+                autorun,
             )
     else:
         # If it doesn't exist, create a new configuration file with default values
@@ -57,13 +59,14 @@ def configuration():
                 "ApiKey": "your_api_key_here",
                 "Endpoint": "your_endpoint_here",
             },
+            "Copilot": {"AutoRun": False},
         }
 
         with open(config_file, "w") as configfile:
             yaml.dump(default_config, configfile, default_flow_style=False)
 
         directory = os.getcwd()
-        
+
         print(
             f"Configuration file was not found so one has been created at '{directory}/{config_file}' with default values."
         )
