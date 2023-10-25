@@ -62,15 +62,10 @@ def configuration():
         with open(config_file, "w") as configfile:
             yaml.dump(default_config, configfile, default_flow_style=False)
 
+        directory = os.getcwd()
+        
         print(
-            f"Configuration file was not found so one has been created at '{config_file}' with default values."
+            f"Configuration file was not found so one has been created at '{directory}/{config_file}' with default values."
         )
 
-        return (
-            "CREATED",
-            default_config["AzureOpenAI"]["Endpoint"],
-            default_config["AzureOpenAI"]["GptDeploymentName"],
-            default_config["AzureOpenAI"]["EmbeddingDeploymentName"],
-            default_config["AzureCognitiveSearch"]["ApiKey"],
-            default_config["AzureCognitiveSearch"]["Endpoint"],
-        )
+        exit(0)

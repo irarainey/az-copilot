@@ -19,6 +19,8 @@ def coro(f):
 @click.argument("prompt", nargs=-1, required=True)
 @coro
 async def copilot(prompt):
+
+    # Get configuration values
     (
         openai_api_key,
         openai_endpoint,
@@ -28,13 +30,11 @@ async def copilot(prompt):
         cognitive_search_endpoint,
     ) = configuration()
 
+    # Determine if configuration is default
     if openai_api_key == "your_api_key_here":
         print(
             "[ERROR] Configuration was found with default values. Please edit the configuration file."
         )
-        exit(0)
-
-    if openai_api_key == "CREATED":
         exit(0)
 
     prompt = " ".join(prompt)
