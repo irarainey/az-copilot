@@ -10,6 +10,7 @@ class ConversationEngine:
         self.chat_history = []
         self._commands = None
         self._problems = None
+
         # setup services
         self.azure_open_ai_client_service = open_ai_service
 
@@ -33,7 +34,6 @@ class ConversationEngine:
         response = await self.azure_open_ai_client_service.send_message(prompt, history)
 
         r = ast.literal_eval(response.result)
-        # awful piece of code
         response = json.loads(json.dumps(r))
 
         if COMMANDS_KEY in response:
@@ -58,7 +58,6 @@ class ConversationEngine:
         response = await self.azure_open_ai_client_service.send_message(prompt, history)
 
         r = ast.literal_eval(response.result)
-        # awful piece of code
         response = json.loads(json.dumps(r))
 
         if COMMANDS_KEY in response:
