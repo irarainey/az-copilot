@@ -14,7 +14,6 @@ azure-cli-core = "^2.53.0"
 click = "^8.1.7"
 azure-identity = "^1.14.0"
 dependency-injector = "^4.41.0"
-python-dotenv = "^1.0.0"
 azure-search-documents = "11.4.0b8"
 semantic-kernel = "0.3.13.dev"
 asyncio = "^3.4.3"
@@ -24,4 +23,4 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-copilot = "azext_copilot.copilot:cli"
+copilot = "azext_copilot.copilot:copilot"

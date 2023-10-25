@@ -164,3 +164,6 @@ dist
 
 # Environment file
 .env
+
+# Configuration file
+/config.yaml

@@ -1,4 +1,3 @@
-import os
 import semantic_kernel
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 from semantic_kernel.connectors.memory.azure_cognitive_search import (
@@ -7,33 +6,28 @@ from semantic_kernel.connectors.memory.azure_cognitive_search import (
 from semantic_kernel.connectors.ai.open_ai import (
     AzureTextEmbedding,
 )
-from azext_copilot._constants import (
-    AZURE_OPENAI_API_KEY,
-    AZURE_OPENAI_ENDPOINT,
-    AZURE_OPENAI_DEPLOYMENT_NAME,
-    AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME,
-    AZURE_COGNITIVE_SEARCH_URL,
-    AZURE_COGNITIVE_SEARCH_KEY,
-)
-from dotenv import load_dotenv
 
 
 class OpenAIService:
-    def __init__(self):
-        load_dotenv()
-        self.api_base = os.environ[AZURE_OPENAI_ENDPOINT]
-        self.api_key = os.environ[AZURE_OPENAI_API_KEY]
-        self.open_ai_gpt_deployment_name = os.environ[AZURE_OPENAI_DEPLOYMENT_NAME]
-        self.open_ai_text_embedding_deployment_name = os.environ[
-            AZURE_OPENAI_EMBEDDING_DEPLOYMENT_NAME
-        ]
-        self.search_endpoint = os.environ[AZURE_COGNITIVE_SEARCH_URL]
-        self.search_key = os.environ[AZURE_COGNITIVE_SEARCH_KEY]
+    def __init__(
+        self,
+        api_key,
+        api_base,
+        open_ai_gpt_deployment_name,
+        open_ai_text_embedding_deployment_name,
+        search_key,
+        search_endpoint,
+    ):
+        self.api_base = api_base
+        self.api_key = api_key
+        self.open_ai_gpt_deployment_name = open_ai_gpt_deployment_name
+        self.open_ai_text_embedding_deployment_name = (
+            open_ai_text_embedding_deployment_name
+        )
+        self.search_endpoint = search_endpoint
+        self.search_key = search_key
         self.vector_size = 1536
         self.kernel = semantic_kernel.Kernel()
-
-        # Configure AI service used by the kernel
-        _, _, endpoint = semantic_kernel.azure_openai_settings_from_dot_env()
 
         connector = AzureCognitiveSearchMemoryStore(
             self.vector_size,
@@ -55,7 +49,7 @@ class OpenAIService:
         self.kernel.add_chat_service(
             "dv",
             AzureChatCompletion(
-                self.open_ai_gpt_deployment_name, endpoint, self.api_key
+                self.open_ai_gpt_deployment_name, self.api_base, self.api_key
             ),
         )
 
