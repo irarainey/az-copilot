@@ -15,7 +15,7 @@ endif
 
 build: ## 🤖 Build the project
 	@figlet $@ || true
-	@poetry build
+	@poetry build --format wheel
 
 clean: ## 🤖 Clean all caches and update packages
 	@figlet $@ || true
