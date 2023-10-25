@@ -4,7 +4,7 @@ from functools import wraps
 from azext_copilot.conversation_engine import ConversationEngine
 from azext_copilot.services.authentication import AuthenticationService
 from azext_copilot.services.openai import OpenAIService
-from azext_copilot._helpers import execute, configuration
+from azext_copilot.helpers import execute, configuration
 
 
 def coro(f):
@@ -19,7 +19,6 @@ def coro(f):
 @click.argument("prompt", nargs=-1, required=True)
 @coro
 async def copilot(prompt):
-
     # Get configuration values
     (
         openai_api_key,
