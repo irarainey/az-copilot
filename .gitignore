@@ -161,9 +161,3 @@ cython_debug/
 
 # Distribution directory
 dist
-
-# Environment file
-.env
-
-# Configuration file
-/config.yaml

@@ -1,8 +1,6 @@
 import ast
 import json
-
-COMMANDS_KEY = "command"
-PROBLEM_KEY = "problem"
+from azext_copilot.constants import COMMANDS_KEY, PROBLEM_KEY
 
 
 class ConversationEngine:

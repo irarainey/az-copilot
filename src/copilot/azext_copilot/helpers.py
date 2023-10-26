@@ -1,6 +1,8 @@
 import os
 import yaml
 import subprocess
+from pathlib import Path
+from azext_copilot.constants import CONFIG_FILENAME
 
 
 def execute(command):
@@ -19,8 +21,9 @@ def execute(command):
 
 
 def configuration():
-    # Define the name of the configuration file
-    config_file = "config.yaml"
+    # Define the name and path of the configuration file
+    user_profile = os.path.expanduser("~")
+    config_file = f"{user_profile}/.az-copilot/{CONFIG_FILENAME}"
 
     # Check if the configuration file exists
     if os.path.exists(config_file):
@@ -62,13 +65,13 @@ def configuration():
             "Copilot": {"AutoRun": False},
         }
 
+        path = Path(f"{user_profile}/.az-copilot")
+        path.mkdir(parents=True, exist_ok=True)
         with open(config_file, "w") as configfile:
             yaml.dump(default_config, configfile, default_flow_style=False)
 
-        directory = os.getcwd()
-
         print(
-            f"Configuration file was not found so one has been created at '{directory}/{config_file}' with default values."
+            f"Configuration file was not found so one has been created at '{config_file}' with default values."
         )
 
         exit(0)
