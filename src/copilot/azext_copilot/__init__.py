@@ -2,8 +2,8 @@ from azext_copilot.copilot import copilot
 from azure.cli.core import AzCommandsLoader
 
 
-def call_cli(cmd_prompt):
-    copilot(cmd_prompt)
+def call_copilot(prompt):
+    copilot(prompt)
 
 
 class CopilotCommandsLoader(AzCommandsLoader):
@@ -16,13 +16,13 @@ class CopilotCommandsLoader(AzCommandsLoader):
 
     def load_command_table(self, _):
         with self.command_group('') as g:
-            g.custom_command('copilot', 'call_cli')
+            g.custom_command('copilot', 'call_copilot')
 
         return self.command_table
 
     def load_arguments(self, _):
         with self.argument_context('copilot') as c:
-            c.argument('cmd_prompt', options_list=['--command', '-c'], help='The plain English command you wish to execute.')
+            c.argument('prompt', options_list=['--prompt', '-p'], help='The plain English prompt for the Az CLI command you would like to execute.')
 
 
 COMMAND_LOADER_CLS = CopilotCommandsLoader
