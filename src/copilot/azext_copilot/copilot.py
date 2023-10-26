@@ -1,10 +1,11 @@
 import click
 import asyncio
 from functools import wraps
-from azext_copilot.conversation_engine import ConversationEngine
-from azext_copilot.services.authentication import AuthenticationService
-from azext_copilot.services.openai import OpenAIService
-from azext_copilot.helpers import execute, configuration
+from .conversation_engine import ConversationEngine
+from .services.authentication import AuthenticationService
+from .services.openai import OpenAIService
+from .helpers import execute
+from .configuration import get_configuration
 
 
 def coro(f):
@@ -28,15 +29,26 @@ async def copilot(prompt):
         cognitive_search_api_key,
         cognitive_search_endpoint,
         autorun,
-    ) = configuration()
+        show_command,
+    ) = get_configuration()
 
-    # Determine if configuration is default
-    if openai_api_key == "your_api_key_here":
+    # Determine if configuration has been set
+    if (
+        openai_api_key is None
+        or openai_endpoint is None
+        or openai_gpt_deployment is None
+        or openai_embedding_deployment is None
+        or cognitive_search_api_key is None
+        or cognitive_search_endpoint is None
+        or autorun is None
+        or show_command is None
+    ):
         print(
-            "[ERROR] Configuration was found with default values. Please edit the configuration file."
+            "Configuration was found with empty values. Run 'az copilot config set' to set the configuration values."
         )
-        exit(0)
+        return
 
+    # Convert prompt to a single string (which isn't needed if it's called from the AZ CLI)
     prompt = " ".join(prompt)
 
     # check authentication
@@ -44,8 +56,7 @@ async def copilot(prompt):
 
     if not authentication_service.is_authenticated():
         click.echo(
-            "You are currently not authenticated with Azure. "
-            "Please login by running the following command: az login"
+            "You are currently not authenticated. Login with 'az login' before continuing."
         )
         return
 
@@ -65,25 +76,27 @@ async def copilot(prompt):
     # feedback loop
     while not engine.is_finished():
         click.echo("\nI need some more information:")
-        click.echo(f"\tCommand: {response['command']}")
-        click.echo(f"\tExplanation: {response['explanation']}")
-        click.echo(f"\tProblem: {response['problem']}")
+        click.echo(f"=> Command: {response['command']}")
+        click.echo(f"=> Explanation: {response['explanation']}")
+        click.echo(f"=> Problem: {response['problem']}")
         prompt = click.prompt(f"\n{response['problem']}")
 
         if prompt == "quit":
             click.echo("Quitting conversation.")
-            exit(0)
+            return
 
         response = await engine.send_prompt(prompt)
 
-    if autorun:
+    if autorun is True:
+        if show_command is True:
+            click.echo(f"\nCommand: {response['command']}")
+            click.echo(f"Explanation: {response['explanation']}")
         click.echo(f"\n{execute(response['command'])}")
     else:
         click.echo(f"\nCommand: {response['command']}")
         click.echo(f"Explanation: {response['explanation']}")
         run_command = click.confirm("\nDo you want to execute this command?")
         if run_command:
-            click.echo(f"\nExecuting command: {response['command']}")
             click.echo(f"\n{execute(response['command'])}")
         else:
             click.echo("Command not executed.")
