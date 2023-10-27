@@ -9,8 +9,7 @@ class AuthenticationService:
         try:
             token = self._credential.get_token("https://management.azure.com/.default")
             return token is not None
-        except Exception as e:
-            print(e)
+        except Exception:
             return False
 
     @property
