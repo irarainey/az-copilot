@@ -66,13 +66,13 @@ class CopilotCommandsLoader(AzCommandsLoader):
             )
             c.argument(
                 "autorun",
-                options_list=["--autorun", "-a"],
+                options_list=["--autorun", "-ar"],
                 help="Boolean value to autorun the command when ready.",
                 required=False,
             )
             c.argument(
                 "show_command",
-                options_list=["--show-command", "-s"],
+                options_list=["--show-command", "-sc"],
                 help="Boolean value to show or hide commands.",
                 required=False,
             )
