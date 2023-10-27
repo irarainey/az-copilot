@@ -26,9 +26,9 @@ def set_configuration(
     )
 
 
-# This is the entry point for the AZ CLI extension to create the embedding
-def create_embedding():
-    print("Create embedding")
+# This is the entry point for the AZ CLI extension to initialise the embedding
+def initialise_embedding():
+    print("Init embedding")
 
 
 # This is the entry point for the AZ CLI extension to update the embedding

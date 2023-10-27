@@ -20,7 +20,7 @@ class CopilotCommandsLoader(AzCommandsLoader):
         with self.command_group("") as g:
             g.custom_command("copilot", "call_openai")
             g.custom_command("copilot config set", "set_configuration")
-            g.custom_command("copilot embedding create", "create_embedding")
+            g.custom_command("copilot embedding init", "initialise_embedding")
             g.custom_command("copilot embedding update", "update_embedding")
 
         # Return the command table
