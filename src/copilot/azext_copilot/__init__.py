@@ -36,13 +36,13 @@ class CopilotCommandsLoader(AzCommandsLoader):
             )
             c.argument(
                 "openai_api_key",
-                options_list=["--api-key", "-ak"],
+                options_list=["--api-key", "-k"],
                 help="The Azure OpenAI API key.",
                 required=False,
             )
             c.argument(
                 "openai_endpoint",
-                options_list=["--openai-endpoint", "-oe"],
+                options_list=["--endpoint", "-e"],
                 help="The Azure OpenAI endpoint.",
                 required=False,
             )
@@ -53,26 +53,14 @@ class CopilotCommandsLoader(AzCommandsLoader):
                 required=False,
             )
             c.argument(
-                "cognitive_search_api_key",
-                options_list=["--search-key", "-sk"],
-                help="The Azure Cognitive Search API key.",
-                required=False,
-            )
-            c.argument(
-                "cognitive_search_endpoint",
-                options_list=["--cognitive-search-endpoint", "-ce"],
-                help="The Azure Cognitive Search endpoint.",
-                required=False,
-            )
-            c.argument(
                 "autorun",
-                options_list=["--autorun", "-ar"],
+                options_list=["--autorun", "-a"],
                 help="Boolean value to autorun the command when ready.",
                 required=False,
             )
             c.argument(
                 "show_command",
-                options_list=["--show-command", "-sc"],
+                options_list=["--show-command", "-s"],
                 help="Boolean value to show or hide commands.",
                 required=False,
             )

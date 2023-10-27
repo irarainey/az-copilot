@@ -60,8 +60,6 @@ def update_configuration(
     openai_api_key,
     openai_endpoint,
     openai_embedding_deployment,
-    cognitive_search_api_key,
-    cognitive_search_endpoint,
     autorun,
     show_command,
 ):
@@ -75,8 +73,6 @@ def update_configuration(
         openai_api_key,
         openai_endpoint,
         openai_embedding_deployment,
-        cognitive_search_api_key,
-        cognitive_search_endpoint,
         autorun,
         show_command,
     )
@@ -100,8 +96,6 @@ def update_config_values(
     openai_api_key,
     openai_endpoint,
     openai_embedding_deployment,
-    cognitive_search_api_key,
-    cognitive_search_endpoint,
     autorun,
     show_command,
 ):
@@ -117,12 +111,6 @@ def update_config_values(
 
     if openai_embedding_deployment is not None:
         config["AzureOpenAI"]["EmbeddingDeploymentName"] = openai_embedding_deployment
-
-    if cognitive_search_api_key is not None:
-        config["AzureCognitiveSearch"]["ApiKey"] = cognitive_search_api_key
-
-    if cognitive_search_endpoint is not None:
-        config["AzureCognitiveSearch"]["Endpoint"] = cognitive_search_endpoint
 
     if autorun is not None:
         config["Copilot"]["AutoRun"] = (

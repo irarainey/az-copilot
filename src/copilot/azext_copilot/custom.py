@@ -11,8 +11,6 @@ def set_configuration(
     openai_api_key,
     openai_endpoint,
     openai_embedding_deployment,
-    cognitive_search_api_key,
-    cognitive_search_endpoint,
     autorun,
     show_command,
 ):
@@ -21,8 +19,6 @@ def set_configuration(
         openai_api_key,
         openai_endpoint,
         openai_embedding_deployment,
-        cognitive_search_api_key,
-        cognitive_search_endpoint,
         autorun,
         show_command,
     )
