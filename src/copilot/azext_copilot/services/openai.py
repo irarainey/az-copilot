@@ -5,12 +5,7 @@ from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
 
 # This class is used to interact with the OpenAI API
 class OpenAIService:
-    def __init__(
-        self,
-        api_key,
-        api_endpoint,
-        completion_deployment_name
-    ):
+    def __init__(self, api_key, api_endpoint, completion_deployment_name):
         # Define the key variables for the OpenAI API
         self.api_endpoint = api_endpoint
         self.api_key = api_key
@@ -34,15 +29,14 @@ class OpenAIService:
             temperature=0, max_tokens=2000, top_p=0.5
         )
 
-        # Define the prompt template
-        sk_prompt = """
-            History: {{$chat_history}}
-            Prompt: {{$user_input}}
-            """
-
         # Create a new prompt template
         prompt_template = semantic_kernel.ChatPromptTemplate(
-            sk_prompt, self.kernel.prompt_template_engine, prompt_config
+            """
+            History: {{$chat_history}}
+            Prompt: {{$user_input}}
+            """,
+            self.kernel.prompt_template_engine,
+            prompt_config,
         )
 
         # Add a system message to the prompt template
