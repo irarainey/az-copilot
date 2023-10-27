@@ -77,7 +77,7 @@ async def copilot(prompt):
 
     # feedback loop
     while not engine.is_finished():
-        click.echo("\nI need some more information:")
+        click.echo("\nI need more information:")
         click.echo(f"=> Command: {response['command']}")
         click.echo(f"=> Explanation: {response['explanation']}")
         click.echo(f"=> Problem: {response['problem']}")

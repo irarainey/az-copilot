@@ -1,44 +1,23 @@
 import os
-import yaml
+import json
 from pathlib import Path
-from .constants import CONFIG_FILENAME
+from .constants import CONFIG_FILENAME, CONFIG_PATH, DEFAULT_CONFIG
 
 
 def create_configuration():
     # Define the name and path of the configuration file
-    user_profile = os.path.expanduser("~")
-    config_file = f"{user_profile}/.az-copilot/{CONFIG_FILENAME}"
-
-    # Define the default configuration values
-    default_config = {
-        "AzureOpenAI": {
-            "ApiKey": None,
-            "Endpoint": None,
-            "GptDeploymentName": None,
-            "EmbeddingDeploymentName": None,
-        },
-        "AzureCognitiveSearch": {
-            "ApiKey": None,
-            "Endpoint": None,
-        },
-        "Copilot": {
-            "AutoRun": False,
-            "ShowCommand": True,
-        },
-    }
+    config_file = Path.home() / CONFIG_PATH / CONFIG_FILENAME
 
     # Create the directory if it doesn't exist
-    path = Path(f"{user_profile}/.az-copilot")
-    path.mkdir(parents=True, exist_ok=True)
+    config_file.parent.mkdir(parents=True, exist_ok=True)
 
     # Create the configuration file
-    write_config_file(config_file, default_config)
+    write_config_file(config_file, DEFAULT_CONFIG)
 
 
 def get_configuration():
     # Define the name and path of the configuration file
-    user_profile = os.path.expanduser("~")
-    config_file = f"{user_profile}/.az-copilot/{CONFIG_FILENAME}"
+    config_file = Path.home() / CONFIG_PATH / CONFIG_FILENAME
 
     # Check if the configuration file exists
     if os.path.exists(config_file):
@@ -47,9 +26,7 @@ def get_configuration():
         openai_api_key = config["AzureOpenAI"]["ApiKey"]
         openai_endpoint = config["AzureOpenAI"]["Endpoint"]
         openai_gpt_deployment = config["AzureOpenAI"]["GptDeploymentName"]
-        openai_embedding_deployment = config["AzureOpenAI"][
-            "EmbeddingDeploymentName"
-        ]
+        openai_embedding_deployment = config["AzureOpenAI"]["EmbeddingDeploymentName"]
         cognitive_search_api_key = config["AzureCognitiveSearch"]["ApiKey"]
         cognitive_search_endpoint = config["AzureCognitiveSearch"]["Endpoint"]
         autorun = config["Copilot"]["AutoRun"]
@@ -89,8 +66,7 @@ def update_configuration(
     show_command,
 ):
     # Define the name and path of the configuration file
-    user_profile = os.path.expanduser("~")
-    config_file = f"{user_profile}/.az-copilot/{CONFIG_FILENAME}"
+    config_file = Path.home() / CONFIG_PATH / CONFIG_FILENAME
 
     config = read_config_file(config_file)
     update_config_values(
@@ -109,13 +85,13 @@ def update_configuration(
 
 def read_config_file(config_file):
     with open(config_file, "r") as configfile:
-        config = yaml.safe_load(configfile)
+        config = json.load(configfile)
     return config
 
 
 def write_config_file(config_file, config):
     with open(config_file, "w") as configfile:
-        yaml.dump(config, configfile, default_flow_style=False)
+        json.dump(config, configfile, indent=4)
 
 
 def update_config_values(
@@ -150,16 +126,12 @@ def update_config_values(
 
     if autorun is not None:
         config["Copilot"]["AutoRun"] = (
-            autorun == "True" or
-            autorun == "true" or
-            autorun is True
+            autorun == "True" or autorun == "true" or autorun is True
         )
 
     if show_command is not None:
         config["Copilot"]["ShowCommand"] = (
-            show_command == "True" or
-            show_command == "true" or
-            show_command is True
+            show_command == "True" or show_command == "true" or show_command is True
         )
 
     return config
