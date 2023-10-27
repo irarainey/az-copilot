@@ -5,32 +5,31 @@ from .constants import COMMAND_KEY, PROBLEM_KEY
 
 # The conversation engine class
 class ConversationEngine:
-    def __init__(self, open_ai_service):
+    def __init__(self, openai_service):
         self.chat_history = []
         self._commands = None
         self._problems = None
 
         # Setup services
-        self.azure_open_ai_client_service = open_ai_service
+        self.openai_client_service = openai_service
 
     async def generate_response(self, prompt):
         self.chat_history = [("q", prompt)]
 
         # Get OpenAI response
-        response = await self.azure_open_ai_client_service.send_message(prompt)
+        response = await self.openai_client_service.send_message(prompt)
         response = json.loads(response.result.strip(""))
         self.chat_history.append(("a", response))
         return response
 
     async def send_prompt(self, prompt):
-        # Replace this with your own conversational engine logic
         self.chat_history.append(("q", prompt))
 
         # create history message
         history = [x[1] for x in self.chat_history]
 
         # get openAI response
-        response = await self.azure_open_ai_client_service.send_message(prompt, history)
+        response = await self.openai_client_service.send_message(prompt, history)
 
         r = ast.literal_eval(response.result)
         response = json.loads(json.dumps(r))
@@ -47,14 +46,13 @@ class ConversationEngine:
         return response
 
     async def continue_conversation(self, prompt):
-        # Replace this with your own conversational engine logic
         self.chat_history.append(("q", prompt))
 
         # create history message
         history = [x[1] for x in self.chat_history]
 
         # get openAI response
-        response = await self.azure_open_ai_client_service.send_message(prompt, history)
+        response = await self.openai_client_service.send_message(prompt, history)
 
         r = ast.literal_eval(response.result)
         response = json.loads(json.dumps(r))

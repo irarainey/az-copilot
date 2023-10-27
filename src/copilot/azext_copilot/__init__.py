@@ -39,30 +39,30 @@ class CopilotCommandsLoader(AzCommandsLoader):
 
         # Create a new argument context for the copilot config set command
         with self.argument_context("copilot config set") as c:
-            # Define the OpenAI deployment name argument
-            c.argument(
-                "openai_gpt_deployment",
-                options_list=["--deployment-name", "-dn"],
-                help="The Azure OpenAI deployment name.",
-                required=False,
-            )
             # Define the OpenAI api key argument
             c.argument(
-                "openai_api_key",
+                "api_key",
                 options_list=["--api-key", "-k"],
                 help="The Azure OpenAI API key.",
                 required=False,
             )
             # Define the OpenAI endpoint argument
             c.argument(
-                "openai_endpoint",
+                "endpoint",
                 options_list=["--endpoint", "-e"],
                 help="The Azure OpenAI endpoint.",
                 required=False,
             )
+            # Define the OpenAI completion name argument
+            c.argument(
+                "completion_deployment",
+                options_list=["--completion-name", "-dn"],
+                help="The Azure OpenAI completion model deployment name.",
+                required=False,
+            )
             # Define the OpenAI embedding name argument
             c.argument(
-                "openai_embedding_deployment",
+                "embedding_deployment",
                 options_list=["--embedding-name", "-en"],
                 help="The Azure OpenAI embedding model deployment name.",
                 required=False,

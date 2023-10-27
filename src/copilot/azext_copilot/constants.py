@@ -14,12 +14,8 @@ DEFAULT_CONFIG = {
     "AzureOpenAI": {
         "ApiKey": None,
         "Endpoint": None,
-        "GptDeploymentName": None,
+        "CompletionDeploymentName": None,
         "EmbeddingDeploymentName": None,
-    },
-    "AzureCognitiveSearch": {
-        "ApiKey": None,
-        "Endpoint": None,
     },
     "Copilot": {
         "AutoRun": False,

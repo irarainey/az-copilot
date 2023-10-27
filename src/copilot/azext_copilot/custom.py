@@ -9,18 +9,18 @@ def call_openai(prompt):
 
 # This is the entry point for the AZ CLI extension to set the configuration
 def set_configuration(
-    openai_gpt_deployment,
-    openai_api_key,
-    openai_endpoint,
-    openai_embedding_deployment,
+    api_key,
+    endpoint,
+    completion_deployment_name,
+    embedding_deployment_name,
     autorun,
     show_command,
 ):
     update_configuration(
-        openai_gpt_deployment,
-        openai_api_key,
-        openai_endpoint,
-        openai_embedding_deployment,
+        api_key,
+        endpoint,
+        completion_deployment_name,
+        embedding_deployment_name,
         autorun,
         show_command,
     )

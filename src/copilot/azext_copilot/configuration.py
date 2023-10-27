@@ -25,22 +25,18 @@ def get_configuration():
     if os.path.exists(config_file):
         # If it exists, read the configuration values
         config = read_config_file(config_file)
-        openai_api_key = config["AzureOpenAI"]["ApiKey"]
-        openai_endpoint = config["AzureOpenAI"]["Endpoint"]
-        openai_gpt_deployment = config["AzureOpenAI"]["GptDeploymentName"]
-        openai_embedding_deployment = config["AzureOpenAI"]["EmbeddingDeploymentName"]
-        cognitive_search_api_key = config["AzureCognitiveSearch"]["ApiKey"]
-        cognitive_search_endpoint = config["AzureCognitiveSearch"]["Endpoint"]
+        api_key = config["AzureOpenAI"]["ApiKey"]
+        endpoint = config["AzureOpenAI"]["Endpoint"]
+        completion_deployment_name = config["AzureOpenAI"]["CompletionDeploymentName"]
+        embedding_deployment_name = config["AzureOpenAI"]["EmbeddingDeploymentName"]
         autorun = config["Copilot"]["AutoRun"]
         show_command = config["Copilot"]["ShowCommand"]
 
         return (
-            openai_api_key,
-            openai_endpoint,
-            openai_gpt_deployment,
-            openai_embedding_deployment,
-            cognitive_search_api_key,
-            cognitive_search_endpoint,
+            api_key,
+            endpoint,
+            completion_deployment_name,
+            embedding_deployment_name,
             autorun,
             show_command,
         )
@@ -59,10 +55,10 @@ def get_configuration():
 
 # Update the configuration values
 def update_configuration(
-    openai_gpt_deployment,
-    openai_api_key,
-    openai_endpoint,
-    openai_embedding_deployment,
+    api_key,
+    endpoint,
+    completion_deployment_name,
+    embedding_deployment_name,
     autorun,
     show_command,
 ):
@@ -72,10 +68,10 @@ def update_configuration(
     config = read_config_file(config_file)
     update_config_values(
         config,
-        openai_gpt_deployment,
-        openai_api_key,
-        openai_endpoint,
-        openai_embedding_deployment,
+        api_key,
+        endpoint,
+        completion_deployment_name,
+        embedding_deployment_name,
         autorun,
         show_command,
     )
@@ -98,25 +94,25 @@ def write_config_file(config_file, config):
 # Update the configuration values
 def update_config_values(
     config,
-    openai_gpt_deployment,
-    openai_api_key,
-    openai_endpoint,
-    openai_embedding_deployment,
+    api_key,
+    endpoint,
+    completion_deployment_name,
+    embedding_deployment_name,
     autorun,
     show_command,
 ):
     # Update the values in the config object
-    if openai_api_key is not None:
-        config["AzureOpenAI"]["ApiKey"] = openai_api_key
+    if api_key is not None:
+        config["AzureOpenAI"]["ApiKey"] = api_key
 
-    if openai_endpoint is not None:
-        config["AzureOpenAI"]["Endpoint"] = openai_endpoint
+    if endpoint is not None:
+        config["AzureOpenAI"]["Endpoint"] = endpoint
 
-    if openai_gpt_deployment is not None:
-        config["AzureOpenAI"]["GptDeploymentName"] = openai_gpt_deployment
+    if completion_deployment_name is not None:
+        config["AzureOpenAI"]["CompletionDeploymentName"] = completion_deployment_name
 
-    if openai_embedding_deployment is not None:
-        config["AzureOpenAI"]["EmbeddingDeploymentName"] = openai_embedding_deployment
+    if embedding_deployment_name is not None:
+        config["AzureOpenAI"]["EmbeddingDeploymentName"] = embedding_deployment_name
 
     if autorun is not None:
         config["Copilot"]["AutoRun"] = (

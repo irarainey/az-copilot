@@ -23,24 +23,20 @@ def coro(f):
 async def copilot(prompt):
     # Get configuration values
     (
-        openai_api_key,
-        openai_endpoint,
-        openai_gpt_deployment,
-        openai_embedding_deployment,
-        cognitive_search_api_key,
-        cognitive_search_endpoint,
+        api_key,
+        endpoint,
+        completion_deployment_name,
+        embedding_deployment_name,
         autorun,
         show_command,
     ) = get_configuration()
 
     # Determine if configuration has been set
     if (
-        openai_api_key is None
-        or openai_endpoint is None
-        or openai_gpt_deployment is None
-        or openai_embedding_deployment is None
-        or cognitive_search_api_key is None
-        or cognitive_search_endpoint is None
+        api_key is None
+        or endpoint is None
+        or completion_deployment_name is None
+        or embedding_deployment_name is None
         or autorun is None
         or show_command is None
     ):
@@ -66,12 +62,10 @@ async def copilot(prompt):
 
     # Setup OpenAI service
     openai = OpenAIService(
-        openai_api_key,
-        openai_endpoint,
-        openai_gpt_deployment,
-        openai_embedding_deployment,
-        cognitive_search_api_key,
-        cognitive_search_endpoint,
+        api_key,
+        endpoint,
+        completion_deployment_name,
+        embedding_deployment_name,
     )
 
     # Setup conversation engine
