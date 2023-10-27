@@ -24,3 +24,13 @@ def set_configuration(
         autorun,
         show_command,
     )
+
+
+# This is the entry point for the AZ CLI extension to create the embedding
+def create_embedding():
+    print("Create embedding")
+
+
+# This is the entry point for the AZ CLI extension to update the embedding
+def update_embedding():
+    print("Update embedding")

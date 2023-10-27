@@ -8,7 +8,7 @@ class CopilotCommandsLoader(AzCommandsLoader):
 
         # The custom command type is used to load the custom commands
         custom_type = CliCommandType(operations_tmpl="azext_copilot.custom#{}")
-        
+
         # The super method is used to initialize the base class
         super(CopilotCommandsLoader, self).__init__(
             cli_ctx=cli_ctx, custom_command_type=custom_type
@@ -20,6 +20,8 @@ class CopilotCommandsLoader(AzCommandsLoader):
         with self.command_group("") as g:
             g.custom_command("copilot", "call_openai")
             g.custom_command("copilot config set", "set_configuration")
+            g.custom_command("copilot embedding create", "create_embedding")
+            g.custom_command("copilot embedding update", "update_embedding")
 
         # Return the command table
         return self.command_table
