@@ -1,7 +1,7 @@
 CONFIG_PATH = ".az-copilot"
 CONFIG_FILENAME = "config.json"
-COMMANDS_KEY = "command"
-PROBLEM_KEY = "problem"
+COMMANDS_KEY = "COMMAND"
+PROBLEM_KEY = "PROBLEM"
 
 DEFAULT_CONFIG = {
     "AzureOpenAI": {

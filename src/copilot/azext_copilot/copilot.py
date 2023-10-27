@@ -78,10 +78,10 @@ async def copilot(prompt):
     # feedback loop
     while not engine.is_finished():
         click.echo("\nI need more information:")
-        click.echo(f"=> Command: {response['command']}")
-        click.echo(f"=> Explanation: {response['explanation']}")
-        click.echo(f"=> Problem: {response['problem']}")
-        prompt = click.prompt(f"\n{response['problem']}")
+        click.echo(f"=> Command: {response['COMMAND']}")
+        click.echo(f"=> Explanation: {response['EXPLANATION']}")
+        click.echo(f"=> Problem: {response['PROBLEM']}")
+        prompt = click.prompt(f"\n{response['PROBLEM']}")
 
         if prompt == "quit":
             click.echo("Quitting conversation.")
@@ -91,14 +91,14 @@ async def copilot(prompt):
 
     if autorun is True:
         if show_command is True:
-            click.echo(f"\nCommand: {response['command']}")
-            click.echo(f"Explanation: {response['explanation']}")
-        click.echo(f"\n{execute(response['command'])}")
+            click.echo(f"\nCommand: {response['COMMAND']}")
+            click.echo(f"Explanation: {response['EXPLANATION']}")
+        click.echo(f"\n{execute(response['COMMAND'])}")
     else:
-        click.echo(f"\nCommand: {response['command']}")
-        click.echo(f"Explanation: {response['explanation']}")
+        click.echo(f"\nCommand: {response['COMMAND']}")
+        click.echo(f"Explanation: {response['EXPLANATION']}")
         run_command = click.confirm("\nDo you want to execute this command?")
         if run_command:
-            click.echo(f"\n{execute(response['command'])}")
+            click.echo(f"\n{execute(response['COMMAND'])}")
         else:
             click.echo("Command not executed.")
