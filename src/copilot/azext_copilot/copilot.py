@@ -44,11 +44,12 @@ async def copilot(prompt):
         or show_command is None
     ):
         print(
-            "Configuration was found with empty values. Run 'az copilot config set' to set the configuration values."
+            "Configuration was found with empty values. "
+            "Run 'az copilot config set' to set the configuration values."
         )
         return
 
-    # Convert prompt to a single string (which isn't needed if it's called from the AZ CLI)
+    # Convert prompt to a single string (which isn't needed when called from the AZ CLI)
     prompt = " ".join(prompt)
 
     # check authentication
@@ -56,7 +57,8 @@ async def copilot(prompt):
 
     if not authentication_service.is_authenticated():
         click.echo(
-            "You are currently not authenticated. Login with 'az login' before continuing."
+            "You are currently not authenticated. "
+            "Login with 'az login' before continuing."
         )
         return
 

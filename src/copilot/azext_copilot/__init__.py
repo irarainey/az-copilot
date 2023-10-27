@@ -22,7 +22,8 @@ class CopilotCommandsLoader(AzCommandsLoader):
             c.argument(
                 "prompt",
                 options_list=["--prompt", "-p"],
-                help="The plain English prompt for the Az CLI command you would like to execute.",
+                help="The plain English prompt for the Az CLI command you would like "
+                "to execute.",
                 required=True,
             )
 

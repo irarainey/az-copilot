@@ -71,7 +71,7 @@ def get_configuration():
 
         # Display a message to the user
         print(
-            f"Configuration file was not found so an empty one has been created at '{config_file}'. Run 'az copilot config set' to set the configuration values."
+            f"Configuration file was not found so an empty one has been created at '{config_file}'. Run 'az copilot config set' to set the configuration values."  # noqa: E501
         )
 
         # Exit the application
@@ -149,9 +149,17 @@ def update_config_values(
         config["AzureCognitiveSearch"]["Endpoint"] = cognitive_search_endpoint
 
     if autorun is not None:
-        config["Copilot"]["AutoRun"] = (autorun == "True" or autorun == "true" or autorun is True)
+        config["Copilot"]["AutoRun"] = (
+            autorun == "True" or
+            autorun == "true" or
+            autorun is True
+        )
 
     if show_command is not None:
-        config["Copilot"]["ShowCommand"] = (show_command == "True" or show_command == "true" or show_command is True)
+        config["Copilot"]["ShowCommand"] = (
+            show_command == "True" or
+            show_command == "true" or
+            show_command is True
+        )
 
     return config
