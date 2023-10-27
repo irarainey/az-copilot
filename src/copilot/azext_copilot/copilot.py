@@ -26,7 +26,7 @@ async def copilot(prompt):
         api_key,
         endpoint,
         completion_deployment_name,
-        embedding_deployment_name,
+        _,  # embedding_deployment_name,
         autorun,
         show_command,
     ) = get_configuration()
@@ -36,7 +36,6 @@ async def copilot(prompt):
         api_key is None
         or endpoint is None
         or completion_deployment_name is None
-        or embedding_deployment_name is None
         or autorun is None
         or show_command is None
     ):
@@ -65,7 +64,6 @@ async def copilot(prompt):
         api_key,
         endpoint,
         completion_deployment_name,
-        embedding_deployment_name,
     )
 
     # Setup conversation engine

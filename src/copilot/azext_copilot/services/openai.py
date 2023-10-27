@@ -1,9 +1,6 @@
 import semantic_kernel
 from azext_copilot.constants import SYSTEM_MESSAGE
 from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
-from semantic_kernel.connectors.ai.open_ai import (
-    AzureTextEmbedding,
-)
 
 
 # This class is used to interact with the OpenAI API
@@ -12,27 +9,15 @@ class OpenAIService:
         self,
         api_key,
         api_endpoint,
-        completion_deployment_name,
-        embedding_deployment_name,
+        completion_deployment_name
     ):
         # Define the key variables for the OpenAI API
         self.api_endpoint = api_endpoint
         self.api_key = api_key
         self.completion_deployment_name = completion_deployment_name
-        self.embedding_deployment_name = embedding_deployment_name
 
         # Create a new instance of the semantic kernel
         self.kernel = semantic_kernel.Kernel()
-
-        # Register the text embedding generation service with the kernel
-        self.kernel.add_text_embedding_generation_service(
-            "text-embedding-ada-002",
-            AzureTextEmbedding(
-                deployment_name=self.embedding_deployment_name,
-                endpoint=self.api_endpoint,
-                api_key=self.api_key,
-            ),
-        )
 
         # Register the chat service with the kernel
         self.kernel.add_chat_service(
