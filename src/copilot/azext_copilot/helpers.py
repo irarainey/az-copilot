@@ -1,6 +1,7 @@
 import subprocess
 
 
+# This is a helper function that will execute a command and return the output
 def execute(command):
     try:
         completed_process = subprocess.run(

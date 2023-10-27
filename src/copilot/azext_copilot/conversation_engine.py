@@ -1,21 +1,22 @@
 import ast
 import json
-from azext_copilot.constants import COMMANDS_KEY, PROBLEM_KEY
+from .constants import COMMAND_KEY, PROBLEM_KEY
 
 
+# The conversation engine class
 class ConversationEngine:
     def __init__(self, open_ai_service):
         self.chat_history = []
         self._commands = None
         self._problems = None
 
-        # setup services
+        # Setup services
         self.azure_open_ai_client_service = open_ai_service
 
     async def generate_response(self, prompt):
         self.chat_history = [("q", prompt)]
 
-        # get openAI response
+        # Get OpenAI response
         response = await self.azure_open_ai_client_service.send_message(prompt)
         response = json.loads(response.result.strip(""))
         self.chat_history.append(("a", response))
@@ -34,8 +35,8 @@ class ConversationEngine:
         r = ast.literal_eval(response.result)
         response = json.loads(json.dumps(r))
 
-        if COMMANDS_KEY in response:
-            self._commands = response[COMMANDS_KEY]
+        if COMMAND_KEY in response:
+            self._commands = response[COMMAND_KEY]
 
         if PROBLEM_KEY in response:
             self._problems = response[PROBLEM_KEY]
@@ -58,8 +59,8 @@ class ConversationEngine:
         r = ast.literal_eval(response.result)
         response = json.loads(json.dumps(r))
 
-        if COMMANDS_KEY in response:
-            self._commands = response[COMMANDS_KEY]
+        if COMMAND_KEY in response:
+            self._commands = response[COMMAND_KEY]
 
         if PROBLEM_KEY in response:
             self._problems = response[PROBLEM_KEY]

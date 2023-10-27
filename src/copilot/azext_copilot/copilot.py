@@ -6,6 +6,7 @@ from .services.authentication import AuthenticationService
 from .services.openai import OpenAIService
 from .helpers import execute
 from .configuration import get_configuration
+from .constants import COMMAND_KEY, PROBLEM_KEY, EXPLANATION_KEY
 
 
 def coro(f):
@@ -52,9 +53,10 @@ async def copilot(prompt):
     # Convert prompt to a single string (which isn't needed when called from the AZ CLI)
     prompt = " ".join(prompt)
 
-    # check authentication
+    # Check authentication
     authentication_service = AuthenticationService()
 
+    # If the user is not authenticated, display a message and exit
     if not authentication_service.is_authenticated():
         click.echo(
             "You are currently not authenticated. "
@@ -62,7 +64,7 @@ async def copilot(prompt):
         )
         return
 
-    # setup conversation engine
+    # Setup OpenAI service
     openai = OpenAIService(
         openai_api_key,
         openai_endpoint,
@@ -72,33 +74,45 @@ async def copilot(prompt):
         cognitive_search_endpoint,
     )
 
+    # Setup conversation engine
     engine = ConversationEngine(openai)
+
+    # Send the prompt to the engine
     response = await engine.send_prompt(prompt)
 
-    # feedback loop
+    # Run the feedback loop
     while not engine.is_finished():
         click.echo("\nI need more information:")
-        click.echo(f"=> Command: {response['COMMAND']}")
-        click.echo(f"=> Explanation: {response['EXPLANATION']}")
-        click.echo(f"=> Problem: {response['PROBLEM']}")
-        prompt = click.prompt(f"\n{response['PROBLEM']}")
+        click.echo(f"\nCommand: {response[COMMAND_KEY]}")
+        click.echo(f"Explanation: {response[EXPLANATION_KEY]}")
+        click.echo(f"Problem: {response[PROBLEM_KEY]}")
+        prompt = click.prompt(f"\n{response[PROBLEM_KEY].rstrip('.')}")
 
+        # Check if the user wants to quit
         if prompt == "quit":
-            click.echo("Quitting conversation.")
+            click.echo("Quitting Copilot conversation.")
             return
 
         response = await engine.send_prompt(prompt)
 
+    # If autorun is True just execute the command
     if autorun is True:
+        # Check if the user wants to see the command
         if show_command is True:
-            click.echo(f"\nCommand: {response['COMMAND']}")
-            click.echo(f"Explanation: {response['EXPLANATION']}")
-        click.echo(f"\n{execute(response['COMMAND'])}")
+            click.echo(f"\nCommand: {response[COMMAND_KEY]}")
+            click.echo(f"Explanation: {response[EXPLANATION_KEY]}")
+
+        # Execute the command and show the output
+        click.echo(f"\n{execute(response[COMMAND_KEY])}")
     else:
-        click.echo(f"\nCommand: {response['COMMAND']}")
-        click.echo(f"Explanation: {response['EXPLANATION']}")
+        # Show Command setting is ignored here because you can't make
+        # a choice if you don't see the command first
+        click.echo(f"\nCommand: {response[COMMAND_KEY]}")
+        click.echo(f"Explanation: {response[EXPLANATION_KEY]}")
         run_command = click.confirm("\nDo you want to execute this command?")
+
+        # If the user wants to execute the command, do so
         if run_command:
-            click.echo(f"\n{execute(response['COMMAND'])}")
+            click.echo(f"\n{execute(response[COMMAND_KEY])}")
         else:
             click.echo("Command not executed.")

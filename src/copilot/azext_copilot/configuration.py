@@ -4,6 +4,7 @@ from pathlib import Path
 from .constants import CONFIG_FILENAME, CONFIG_PATH, DEFAULT_CONFIG
 
 
+# Create a new configuration file
 def create_configuration():
     # Define the name and path of the configuration file
     config_file = Path.home() / CONFIG_PATH / CONFIG_FILENAME
@@ -15,6 +16,7 @@ def create_configuration():
     write_config_file(config_file, DEFAULT_CONFIG)
 
 
+# Get the configuration values
 def get_configuration():
     # Define the name and path of the configuration file
     config_file = Path.home() / CONFIG_PATH / CONFIG_FILENAME
@@ -55,6 +57,7 @@ def get_configuration():
         exit(0)
 
 
+# Update the configuration values
 def update_configuration(
     openai_gpt_deployment,
     openai_api_key,
@@ -79,17 +82,20 @@ def update_configuration(
     write_config_file(config_file, config)
 
 
+# Read the configuration file
 def read_config_file(config_file):
     with open(config_file, "r") as configfile:
         config = json.load(configfile)
     return config
 
 
+# Write the configuration file
 def write_config_file(config_file, config):
     with open(config_file, "w") as configfile:
         json.dump(config, configfile, indent=4)
 
 
+# Update the configuration values
 def update_config_values(
     config,
     openai_gpt_deployment,
@@ -99,7 +105,7 @@ def update_config_values(
     autorun,
     show_command,
 ):
-    # Update the values in the config dictionary
+    # Update the values in the config object
     if openai_api_key is not None:
         config["AzureOpenAI"]["ApiKey"] = openai_api_key
 
