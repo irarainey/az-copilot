@@ -1,5 +1,5 @@
 import json
-from .constants import AZ_CLI_DOCUMENTATION
+from azext_copilot.constants import AZ_CLI_DOCUMENTATION
 import requests
 from bs4 import BeautifulSoup
 import urllib.request
@@ -142,7 +142,7 @@ if __name__ == "__main__":
     # print("\n\nSearching documents")
 
     results = collection.query(
-        query_texts=["front door"],
+        query_texts=["load testing"],
         n_results=1
     )
 

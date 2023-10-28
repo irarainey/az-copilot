@@ -18,6 +18,9 @@ asyncio = "^3.4.3"
 beautifulsoup4 = "^4.0.0"
 chromadb = "^0.4.15"
 
+[tool.poetry.group.chromadb.dependencies]
+chromadb = "^0.4.15"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
