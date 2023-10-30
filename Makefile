@@ -31,3 +31,7 @@ deploy: ## 🤖 Deploy the project locally
 
 all: ## 🤖 Run all the steps together
 	@make clean && make install && make deploy
+
+extract-docs: ## 🤖 Extract the Azure CLI Documentation
+	@figlet $@ || true
+	@rm extract/docs -fdr && python3 extract/main.py
