@@ -12,6 +12,18 @@ CONFIG_PATH = ".az-copilot"
 # The configuration file name
 CONFIG_FILENAME = "config.json"
 
+# The Coginitive Search collection name
+COLLECTION_NAME = "az-docs"
+
+# The Azure CLI documentation domain
+CLI_DOCUMENTATION_DOMAIN = "learn.microsoft.com/en-us/cli/azure"
+
+# The Azure CLI documentation URL
+CLI_DOCUMENTATION_URL = "https://{learn.microsoft.com/en-us/cli/azure}/reference-index?view=azure-cli-latest"  # noqa: E501
+
+# The Azure CLI documentation URL pattern
+HTTP_URL_PATTERN = r"^http[s]{0,1}://.+$"
+
 # The default configuration values
 DEFAULT_CONFIG = {
     "AzureOpenAI": {

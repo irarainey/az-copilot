@@ -1,19 +1,26 @@
 import re
-import os
 import datetime
 import requests
 import urllib.request
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from html.parser import HTMLParser
+from semantic_kernel import Kernel
+from semantic_kernel.connectors.ai.open_ai import (
+    AzureTextEmbedding,
+)
+from semantic_kernel.connectors.memory.azure_cognitive_search import (
+    AzureCognitiveSearchMemoryStore,
+)
+import asyncio
+import nltk
 
-
-HTTP_URL_PATTERN = r"^http[s]{0,1}://.+$"
-
-# Define root domain to crawl
-domain = "learn.microsoft.com/en-us/cli/azure"
-full_url = (
-    "https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest"
+from azext_copilot.configuration import get_configuration
+from azext_copilot.constants import (
+    CLI_DOCUMENTATION_DOMAIN,
+    CLI_DOCUMENTATION_URL,
+    COLLECTION_NAME,
+    HTTP_URL_PATTERN,
 )
 
 
@@ -106,31 +113,60 @@ def extract_content(url):
 
     lines = (line.strip() for line in body.get_text().splitlines())
     lines = "\n".join(
-        line for line in lines
-            if line and
-            line != "Reference" and
-            line != "Feedback" and
-            line != "In this article" and
-            line != "Edit" and
-            line != "Note" and
-            line != "This command group has commands that are defined in both Azure CLI and at least one extension. Install each extension to benefit from its extended capabilities. Learn more about extensions." # noqa
+        line
+        for line in lines
+        if line
+        and line != "Reference"
+        and line != "Feedback"
+        and line != "In this article"
+        and line != "Edit"
+        and line != "Note"
+        and line
+        != "This command group has commands that are defined in both Azure CLI and at least one extension. Install each extension to benefit from its extended capabilities. Learn more about extensions."  # noqa
     )
 
     return title, lines
 
 
-if __name__ == "__main__":
+async def load():
+    (
+        openai_api_key,
+        openai_endpoint,
+        _,
+        embedding_deployment_name,
+        search_api_key,
+        search_endpoint,
+        _,
+        _,
+    ) = get_configuration()
+
+    kernel = Kernel()
+
+    vector_size = 1536
+
+    kernel.add_text_embedding_generation_service(
+        "text-embedding-ada-002",
+        AzureTextEmbedding(
+            embedding_deployment_name,
+            openai_endpoint,
+            openai_api_key,
+        ),
+    )
+
+    kernel.register_memory_store(
+        memory_store=AzureCognitiveSearchMemoryStore(
+            vector_size, search_endpoint, search_api_key, COLLECTION_NAME
+        )
+    )
+
     now = datetime.date.today()
 
-    isExist = os.path.exists("extract/docs")
-
-    if not isExist:
-        os.makedirs("extract/docs")
-
-    print(f"Getting links from {domain} and {full_url}")
-    links = get_domain_hyperlinks(domain, full_url)
+    print("Getting documentation links")
+    links = get_domain_hyperlinks(CLI_DOCUMENTATION_DOMAIN, CLI_DOCUMENTATION_URL)
 
     print(f"Found {len(links)} links")
+
+    counter = 0
 
     for url in links:
         print(f"Extracting text from {url}")
@@ -143,9 +179,22 @@ if __name__ == "__main__":
             continue
 
         title = title.replace(" | Microsoft Learn", "")
-        f = open(f"extract/docs/{title}.txt", "w")
 
-        print(f"Writing file {title}.txt")
+        print(f"Writing record {title}")
 
-        f.write(copy)
-        f.close()
+        sentences = nltk.sent_tokenize(copy)  # Tokenize into sentences
+
+        for sentence in sentences:
+            counter += 1
+            await kernel.memory.save_information_async(
+                COLLECTION_NAME,
+                id=str(counter).zfill(3),
+                text=sentence,
+                description=title,
+                additional_metadata=now,
+            )
+
+
+if __name__ == "__main__":
+    nltk.download("punkt")
+    asyncio.run(load())

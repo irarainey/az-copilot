@@ -1,4 +1,5 @@
 import asyncio
+import json
 import semantic_kernel
 from azext_copilot.constants import SEARCH_INDEX_NAME, SYSTEM_MESSAGE
 from semantic_kernel.connectors.ai.open_ai import (
@@ -115,6 +116,24 @@ class OpenAIService:
         context[semantic_kernel.core_skills.TextMemorySkill.RELEVANCE_PARAM] = 0.5
         context["chat_history"] = history_message
         context["user_input"] = prompt
+
+        # await self.kernel.memory.save_information_async(
+        #     SEARCH_INDEX_NAME, id="001", text=AZ_LOAD
+        # )
+
+        results = await context.memory.search_async(
+            collection="az-docs",
+            query=prompt,
+            limit=int(10),
+            min_relevance_score=float(0.8),
+        )
+
+        for result in results:
+            print(json.dumps(result.text))
+            print(json.dumps(result.description))
+            print(json.dumps(result.additional_metadata))
+
+        exit(0)
 
         # Invoke the semantic function
         return await chat_function.invoke_async(context=context)
