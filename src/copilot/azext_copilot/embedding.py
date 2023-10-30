@@ -1,3 +1,4 @@
+import datetime
 import json
 from azext_copilot.constants import AZ_CLI_DOCUMENTATION
 import requests
@@ -7,7 +8,7 @@ from urllib.parse import urlparse
 from html.parser import HTMLParser
 import re
 import chromadb
-
+import os
 
 HTTP_URL_PATTERN = r'^http[s]{0,1}://.+$'
 
@@ -92,36 +93,69 @@ def get_domain_hyperlinks(local_domain, url):
 
 
 def extract_text_from(url):
-    html = requests.get(url).text
-    soup = BeautifulSoup(html, features="html.parser")
+    # html = requests.get(url).text
+    response = requests.get(url)
+    content = response.content
+    soup = BeautifulSoup(content, features="html.parser")
+
+    title = soup.find('title').text
+
     text = soup.get_text()
 
     lines = (line.strip() for line in text.splitlines())
     return '\n'.join(line for line in lines if line)
 
 
+def extract_title_from(url) -> str:
+    response = requests.get(url)
+    content = response.content
+    soup = BeautifulSoup(content, features="html.parser")
+    title = soup.find('title').text
+
+    return title
+
+
 if __name__ == "__main__":
 
+    now = datetime.date.today()
+    
+    isExist = os.path.exists("docs")
+
+    if not isExist:
+        os.makedirs("docs")
+   
     # pages = []
-    # print(f"Getting links from {domain} and {full_url}")
-    # links = get_domain_hyperlinks(domain, full_url)
-    # print(f"Found {len(links)} links")
-    # for url in links:
-    #     copy = extract_text_from(url)
-    #     copy = copy.replace('Microsoft Learn\nSkip to main content\nThis browser is no longer supported.\nUpgrade to Microsoft Edge to take advantage of the latest features, security updates, and technical support.\nDownload Microsoft Edge\nMore info about Internet Explorer and Microsoft Edge\nTable of contents\nExit focus mode\nRead in English\nSave\nTable of contents\nRead in English\nSave\nPrint\nTwitter\nLinkedIn\nFacebook\nEmail', '')
-    #     copy = copy.replace('\nFeedback\nSubmit and view feedback for\nThis page\nView all page feedback\nTheme\nLight\nDark\nHigh contrast\nPrevious Versions\nBlog\nContribute\nPrivacy\nTerms of Use\nTrademarks\n\u00a9 Microsoft 2023\nAdditional resources\nIn this article\nTheme\nLight\nDark\nHigh contrast\nPrevious Versions\nBlog\nContribute\nPrivacy\nTerms of Use\nTrademarks\n\u00a9 Microsoft 2023', '')
-    #     copy = copy.replace('\n', '. ')
-    #     copy = copy.replace('Table of contents.', '')
-    #     copy = copy.replace('..', '.')
-    #     pages.append({'text': copy, 'source': url})
-    #     print(f"Extracting text from {url}")
+    print(f"Getting links from {domain} and {full_url}")
+    links = get_domain_hyperlinks(domain, full_url)
+    print(f"Found {len(links)} links")
+    for url in links:
+        title = extract_title_from(url)
+        copy = extract_text_from(url)
+        
+        if title.startswith('404 - Content Not Found'):
+            continue
+        
+        title = title.replace(' | Microsoft Learn', '')
+        f = open(f"docs/{title}.txt", "w")
 
-    # with open("output.json", "w") as f:
-    #     json.dump(pages, f, indent=4)
+        copy = copy.replace('Microsoft Learn\nSkip to main content\nThis browser is no longer supported.\nUpgrade to Microsoft Edge to take advantage of the latest features, security updates, and technical support.\nDownload Microsoft Edge\nMore info about Internet Explorer and Microsoft Edge\nTable of contents\nExit focus mode\nRead in English\nSave\nTable of contents\nRead in English\nSave\nPrint\nTwitter\nLinkedIn\nFacebook\nEmail', '')
+        copy = copy.replace('\nFeedback\nSubmit and view feedback for\nThis page\nView all page feedback\nTheme\nLight\nDark\nHigh contrast\nPrevious Versions\nBlog\nContribute\nPrivacy\nTerms of Use\nTrademarks\n\u00a9 Microsoft 2023\nAdditional resources\nIn this article\nTheme\nLight\nDark\nHigh contrast\nPrevious Versions\nBlog\nContribute\nPrivacy\nTerms of Use\nTrademarks\n\u00a9 Microsoft 2023', '')
+        copy = copy.replace('\n', '. ')
+        copy = copy.replace('Table of contents.', '')
+        copy = copy.replace('..', '.')
+        copy = copy.replace(f' | .  {title}. Reference. Feedback. In this article', '')
 
-    chroma_client = chromadb.PersistentClient(path="/home/ira/.az-copilot")
-    # chroma_client = chromadb.Client()
-    collection = chroma_client.get_or_create_collection(name="az-cli-documentation")
+        title = title.replace(' ', '_')
+        
+        # pages.append({'text': copy, 'source': url})
+        print(f"Extracting text from {url}")
+
+        f.write(copy)
+            # json.dump({'text': copy, 'source': url, 'generated': f"{now}"}, f, indent=4)
+
+    # chroma_client = chromadb.PersistentClient(path="/home/ira/.az-copilot")
+    # # chroma_client = chromadb.Client()
+    # collection = chroma_client.get_or_create_collection(name="az-cli-documentation")
 
     # coll_list = chroma_client.list_collections()
     # print(coll_list)
@@ -141,9 +175,9 @@ if __name__ == "__main__":
 
     # print("\n\nSearching documents")
 
-    results = collection.query(
-        query_texts=["load testing"],
-        n_results=1
-    )
+    # results = collection.query(
+    #     query_texts=["load testing"],
+    #     n_results=1
+    # )
 
-    print(results)
+    # print(results)

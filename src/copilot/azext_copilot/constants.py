@@ -6,6 +6,9 @@ EXPLANATION_KEY = "EXPLANATION"
 # The Azure CLI documentation URL
 AZ_CLI_DOCUMENTATION = "https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest"  # noqa: E501
 
+# The Azure Cognitive Search index name
+SEARCH_INDEX_NAME = "az-cli-docs"
+
 # The configuration file path
 CONFIG_PATH = ".az-copilot"
 
@@ -19,6 +22,10 @@ DEFAULT_CONFIG = {
         "Endpoint": None,
         "CompletionDeploymentName": None,
         "EmbeddingDeploymentName": None,
+    },
+    "AzureCognitiveSearch": {
+        "ApiKey": None,
+        "Endpoint": None,
     },
     "Copilot": {
         "AutoRun": False,

@@ -20,8 +20,6 @@ class CopilotCommandsLoader(AzCommandsLoader):
         with self.command_group("") as g:
             g.custom_command("copilot", "call_openai")
             g.custom_command("copilot config set", "set_configuration")
-            g.custom_command("copilot embedding init", "initialise_embedding")
-            g.custom_command("copilot embedding update", "update_embedding")
 
         # Return the command table
         return self.command_table
@@ -43,30 +41,44 @@ class CopilotCommandsLoader(AzCommandsLoader):
         with self.argument_context("copilot config set") as c:
             # Define the OpenAI api key argument
             c.argument(
-                "api_key",
-                options_list=["--api-key", "-k"],
+                "openai_api_key",
+                options_list=["--openai-api-key", "-ok"],
                 help="The Azure OpenAI API key.",
                 required=False,
             )
             # Define the OpenAI endpoint argument
             c.argument(
-                "endpoint",
-                options_list=["--endpoint", "-e"],
+                "openai_endpoint",
+                options_list=["--openai-endpoint", "-oe"],
                 help="The Azure OpenAI endpoint.",
                 required=False,
             )
-            # Define the OpenAI completion name argument
+            # Define the OpenAI completion deployment name argument
             c.argument(
                 "completion_deployment",
-                options_list=["--completion-name", "-dn"],
+                options_list=["--completion-name", "-cn"],
                 help="The Azure OpenAI completion model deployment name.",
                 required=False,
             )
-            # Define the OpenAI embedding name argument
+            # Define the OpenAI embedding deployment name argument
             c.argument(
                 "embedding_deployment",
                 options_list=["--embedding-name", "-en"],
                 help="The Azure OpenAI embedding model deployment name.",
+                required=False,
+            )
+            # Define the Cognitive Search api key argument
+            c.argument(
+                "search_api_key",
+                options_list=["--search-api-key", "-sk"],
+                help="The Azure Cognitive Search API key.",
+                required=False,
+            )
+            # Define the Cognitive Search endpoint argument
+            c.argument(
+                "search_endpoint",
+                options_list=["--search-endpoint", "-se"],
+                help="The Azure Cognitive Search endpoint.",
                 required=False,
             )
             # Define the autorun argument

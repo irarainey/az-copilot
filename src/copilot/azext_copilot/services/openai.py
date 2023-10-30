@@ -1,13 +1,12 @@
+import asyncio
 import semantic_kernel
-import semantic_kernel as sk
-from azext_copilot.constants import SYSTEM_MESSAGE
-from semantic_kernel.connectors.ai.open_ai import AzureChatCompletion
+from azext_copilot.constants import SEARCH_INDEX_NAME, SYSTEM_MESSAGE
 from semantic_kernel.connectors.ai.open_ai import (
+    AzureChatCompletion,
     AzureTextEmbedding,
 )
-import chromadb
-from semantic_kernel.connectors.memory.chroma.chroma_memory_store import (
-    ChromaMemoryStore,
+from semantic_kernel.connectors.memory.azure_cognitive_search import (
+    AzureCognitiveSearchMemoryStore,
 )
 
 
@@ -15,16 +14,21 @@ from semantic_kernel.connectors.memory.chroma.chroma_memory_store import (
 class OpenAIService:
     def __init__(
         self,
-        api_key,
-        api_endpoint,
+        openai_api_key,
+        openai_api_endpoint,
         completion_deployment_name,
         embedding_deployment_name,
+        search_api_key,
+        search_endpoint,
     ):
         # Define the key variables for the OpenAI API
-        self.api_endpoint = api_endpoint
-        self.api_key = api_key
+        self.openai_api_key = openai_api_key
+        self.openai_api_endpoint = openai_api_endpoint
         self.completion_deployment_name = completion_deployment_name
         self.embedding_deployment_name = embedding_deployment_name
+        self.vector_size = 1536
+        self.search_api_key = search_api_key
+        self.search_endpoint = search_endpoint
 
         # Create a new instance of the semantic kernel
         self.kernel = semantic_kernel.Kernel()
@@ -33,7 +37,9 @@ class OpenAIService:
         self.kernel.add_chat_service(
             "gpt-35-turbo-16k",
             AzureChatCompletion(
-                self.completion_deployment_name, self.api_endpoint, self.api_key
+                self.completion_deployment_name,
+                self.openai_api_endpoint,
+                self.openai_api_key,
             ),
         )
 
@@ -42,20 +48,26 @@ class OpenAIService:
             "text-embedding-ada-002",
             AzureTextEmbedding(
                 deployment_name=self.embedding_deployment_name,
-                endpoint=self.api_endpoint,
-                api_key=self.api_key,
+                endpoint=self.openai_api_endpoint,
+                api_key=self.openai_api_key,
             ),
         )
 
-        chroma = ChromaMemoryStore(persist_directory="/home/ira/.az-copilot")
-        self.kernel.register_memory_store(memory_store=chroma)
+        self.kernel.register_memory_store(
+            memory_store=AzureCognitiveSearchMemoryStore(
+                self.vector_size,
+                self.search_endpoint,
+                self.search_api_key,
+            )
+        )
 
-        # chroma_client = chromadb.PersistentClient(path="/home/ira/.az-copilot")
-        # collection = chroma_client.get_or_create_collection(name="az-cli-documentation")
-        # self.kernel.import_skill(sk.core_skills.TextMemorySkill())
+        self.kernel.import_skill(semantic_kernel.core_skills.TextMemorySkill())
+
+    def send_prompt(self, input, history=None):
+        return asyncio.run(self.send(input, history))
 
     # This method is used to send a message to the OpenAI API
-    async def send_message(self, input, history=None):
+    async def send(self, prompt, history=None):
         # Define the prompt configuration
         prompt_config = semantic_kernel.PromptTemplateConfig.from_completion_parameters(
             temperature=0, max_tokens=2000, top_p=0.5
@@ -97,8 +109,12 @@ class OpenAIService:
         context = self.kernel.create_new_context()
 
         # Define the context variables
+        context[
+            semantic_kernel.core_skills.TextMemorySkill.COLLECTION_PARAM
+        ] = SEARCH_INDEX_NAME
+        context[semantic_kernel.core_skills.TextMemorySkill.RELEVANCE_PARAM] = 0.5
         context["chat_history"] = history_message
-        context["user_input"] = input
+        context["user_input"] = prompt
 
         # Invoke the semantic function
         return await chat_function.invoke_async(context=context)
