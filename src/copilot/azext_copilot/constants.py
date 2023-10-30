@@ -3,23 +3,23 @@ COMMAND_KEY = "COMMAND"
 PROBLEM_KEY = "PROBLEM"
 EXPLANATION_KEY = "EXPLANATION"
 
-# The Azure Cognitive Search index name
-SEARCH_INDEX_NAME = "az-cli-docs"
-
 # The configuration file path
 CONFIG_PATH = ".az-copilot"
 
 # The configuration file name
 CONFIG_FILENAME = "config.json"
 
-# The Coginitive Search collection name
-COLLECTION_NAME = "az-docs"
+# The Coginitive Search index name
+SEARCH_INDEX_NAME = "az-cli-docs"
+
+# The Cognitive Search vector size
+SEARCH_VECTOR_SIZE = 1536
 
 # The Azure CLI documentation domain
 CLI_DOCUMENTATION_DOMAIN = "learn.microsoft.com/en-us/cli/azure"
 
 # The Azure CLI documentation URL
-CLI_DOCUMENTATION_URL = "https://{learn.microsoft.com/en-us/cli/azure}/reference-index?view=azure-cli-latest"  # noqa: E501
+CLI_DOCUMENTATION_URL = "https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest"  # noqa: E501
 
 # The Azure CLI documentation URL pattern
 HTTP_URL_PATTERN = r"^http[s]{0,1}://.+$"

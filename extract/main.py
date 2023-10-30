@@ -19,7 +19,7 @@ from azext_copilot.configuration import get_configuration
 from azext_copilot.constants import (
     CLI_DOCUMENTATION_DOMAIN,
     CLI_DOCUMENTATION_URL,
-    COLLECTION_NAME,
+    SEARCH_INDEX_NAME,
     HTTP_URL_PATTERN,
 )
 
@@ -155,7 +155,7 @@ async def load():
 
     kernel.register_memory_store(
         memory_store=AzureCognitiveSearchMemoryStore(
-            vector_size, search_endpoint, search_api_key, COLLECTION_NAME
+            vector_size, search_endpoint, search_api_key, SEARCH_INDEX_NAME
         )
     )
 
@@ -187,7 +187,7 @@ async def load():
         for sentence in sentences:
             counter += 1
             await kernel.memory.save_information_async(
-                COLLECTION_NAME,
+                SEARCH_INDEX_NAME,
                 id=str(counter).zfill(3),
                 text=sentence,
                 description=title,

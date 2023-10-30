@@ -1,7 +1,11 @@
 import asyncio
 import json
 import semantic_kernel
-from azext_copilot.constants import SEARCH_INDEX_NAME, SYSTEM_MESSAGE
+from azext_copilot.constants import (
+    SEARCH_INDEX_NAME,
+    SEARCH_VECTOR_SIZE,
+    SYSTEM_MESSAGE,
+)
 from semantic_kernel.connectors.ai.open_ai import (
     AzureChatCompletion,
     AzureTextEmbedding,
@@ -27,7 +31,6 @@ class OpenAIService:
         self.openai_api_endpoint = openai_api_endpoint
         self.completion_deployment_name = completion_deployment_name
         self.embedding_deployment_name = embedding_deployment_name
-        self.vector_size = 1536
         self.search_api_key = search_api_key
         self.search_endpoint = search_endpoint
 
@@ -54,15 +57,14 @@ class OpenAIService:
             ),
         )
 
+        # Register Cognitive Search as a memory store
         self.kernel.register_memory_store(
             memory_store=AzureCognitiveSearchMemoryStore(
-                self.vector_size,
+                SEARCH_VECTOR_SIZE,
                 self.search_endpoint,
                 self.search_api_key,
             )
         )
-
-        self.kernel.import_skill(semantic_kernel.core_skills.TextMemorySkill())
 
     def send_prompt(self, input, history=None):
         return asyncio.run(self.send(input, history))
@@ -77,6 +79,7 @@ class OpenAIService:
         # Create a new prompt template
         prompt_template = semantic_kernel.ChatPromptTemplate(
             """
+            Relevant Azure CLI Documentation: {{$relevant_documentation}}
             History: {{$chat_history}}
             Prompt: {{$user_input}}
             """,
@@ -109,31 +112,25 @@ class OpenAIService:
         # Create a new context
         context = self.kernel.create_new_context()
 
-        # Define the context variables
-        context[
-            semantic_kernel.core_skills.TextMemorySkill.COLLECTION_PARAM
-        ] = SEARCH_INDEX_NAME
-        context[semantic_kernel.core_skills.TextMemorySkill.RELEVANCE_PARAM] = 0.5
-        context["chat_history"] = history_message
-        context["user_input"] = prompt
-
-        # await self.kernel.memory.save_information_async(
-        #     SEARCH_INDEX_NAME, id="001", text=AZ_LOAD
-        # )
-
-        results = await context.memory.search_async(
-            collection="az-docs",
+        # Search the memory store for any relevant documentation
+        documentation = await context.memory.search_async(
+            collection=SEARCH_INDEX_NAME,
             query=prompt,
-            limit=int(10),
-            min_relevance_score=float(0.8),
+            limit=10,
+            min_relevance_score=0.8,
         )
 
-        for result in results:
+        for result in documentation:
             print(json.dumps(result.text))
             print(json.dumps(result.description))
             print(json.dumps(result.additional_metadata))
 
         exit(0)
+
+        # Define the context variables
+        context["relevant_documentation"] = ""
+        context["chat_history"] = history_message
+        context["user_input"] = prompt
 
         # Invoke the semantic function
         return await chat_function.invoke_async(context=context)
