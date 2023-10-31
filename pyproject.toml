@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "copilot"
-version = "0.1.2"
+version = "0.1.3"
 description = "Azure CLI Copilot"
 authors = ["Ira Rainey <ira.rainey@microsoft.com>"]
 readme = "README.md"

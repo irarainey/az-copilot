@@ -17,20 +17,24 @@ def execute(command, enable_logging):
 
     stdout, stderr = process.communicate()
 
-    if stderr.startswith(
-        "WARNING: Unable to prompt for confirmation as no tty available. Use --yes."
-    ):
-        if enable_logging:
-            print("[HELPERS|EXECUTE] Command requires confirmation. Adding --yes.")
-        execute(f"{command} --yes", enable_logging)
-
-    if stderr.startswith(
-        "WARNING: The command requires the extension load. It will be installed first."
-    ):
-        print("This command requires an extension. Installing it now...")
+    has_err = bool(stderr.strip())
 
     if enable_logging:
         print(f"[HELPERS|EXECUTE] stdout: {stdout}")
         print(f"[HELPERS|EXECUTE] stderr: {stderr}")
 
-    return stdout
+    if stderr.startswith(
+        "WARNING: Unable to prompt for confirmation as no tty available. Use --yes."
+    ):
+        if enable_logging:
+            print("[HELPERS|EXECUTE] Command requires confirmation. Adding --yes.")
+        has_err = False
+        execute(f"{command} --yes", enable_logging)
+
+    if stderr.startswith(
+        "WARNING: The command requires the extension load. It will be installed first."
+    ):
+        has_err = False
+        print("This command requires an extension. Installed it for you.")
+
+    return stdout, stderr, has_err

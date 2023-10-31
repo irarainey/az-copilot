@@ -100,7 +100,15 @@ def copilot(prompt):
             print(f"Explanation: {response[EXPLANATION_KEY]}")
 
         # Execute the command and show the output
-        print(f"\n{execute(response[COMMAND_KEY], enable_logging)}")
+        stdout, stderr, has_err = execute(response[COMMAND_KEY], enable_logging)
+
+        # If an unhandled error occurred then drop out
+        if has_err:
+            print(stderr)
+            exit(0)
+
+        # Show the output of the command
+        print(stdout)
     else:
         # Show Command setting is ignored here because you can't make
         # a choice if you don't see the command first
@@ -113,6 +121,15 @@ def copilot(prompt):
 
         # If the user wants to execute the command, do so
         if run_command:
-            print(f"\n{execute(response[COMMAND_KEY], enable_logging)}")
+            # Execute the command and show the output
+            stdout, stderr, has_err = execute(response[COMMAND_KEY], enable_logging)
+
+            # If an unhandled error occurred then drop out
+            if has_err:
+                print(stderr)
+                exit(0)
+
+            # Show the output of the command
+            print(stdout)
         else:
             print("Command not executed.")
