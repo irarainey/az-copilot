@@ -16,7 +16,7 @@ SEARCH_INDEX_NAME = "az-cli-docs"
 SEARCH_VECTOR_SIZE = 1536
 
 # The Cognitive Search result count
-SEARCH_RESULT_COUNT = 5
+SEARCH_RESULT_COUNT = 3
 
 # The Cognitive Search relevance threshold
 SEARCH_RELEVANCE_THRESHOLD = 0.8
