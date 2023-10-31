@@ -1,10 +1,10 @@
+import argparse
 from azext_copilot.conversation_engine import ConversationEngine
 from azext_copilot.services.authentication import AuthenticationService
 from azext_copilot.services.openai import OpenAIService
 from azext_copilot.helpers import execute
 from azext_copilot.configuration import get_configuration
 from azext_copilot.constants import COMMAND_KEY, PROBLEM_KEY, EXPLANATION_KEY
-import argparse
 
 
 def invoke():
