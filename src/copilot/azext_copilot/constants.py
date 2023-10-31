@@ -49,6 +49,7 @@ DEFAULT_CONFIG = {
         "AutoRun": False,
         "ShowCommand": True,
         "UseRAG": False,
+        "EnableLogging": False,
     },
 }
 

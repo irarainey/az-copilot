@@ -5,13 +5,14 @@ from azext_copilot.constants import COMMAND_KEY, PROBLEM_KEY
 
 # The conversation engine class
 class ConversationEngine:
-    def __init__(self, openai_service):
+    def __init__(self, openai_service, enable_logging):
         self.chat_history = []
         self._commands = None
         self._problems = None
 
         # Setup services
         self.openai_client_service = openai_service
+        self.enable_logging = enable_logging
 
     def send_prompt(self, prompt):
         self.chat_history.append(("q", prompt))
@@ -24,6 +25,11 @@ class ConversationEngine:
 
         r = ast.literal_eval(response.result)
         response = json.loads(json.dumps(r))
+
+        if self.enable_logging:
+            print(
+                f"[CONVERSATION ENGINE|SEND PROMPT] Conversation Response: {response}"
+            )
 
         if COMMAND_KEY in response:
             self._commands = response[COMMAND_KEY]

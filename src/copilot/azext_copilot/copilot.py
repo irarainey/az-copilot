@@ -26,6 +26,7 @@ def copilot(prompt):
         autorun,
         show_command,
         use_rag,
+        enable_logging,
     ) = get_configuration()
 
     # Determine if configuration has been set
@@ -39,6 +40,7 @@ def copilot(prompt):
         or autorun is None
         or show_command is None
         or use_rag is None
+        or enable_logging is None
     ):
         print(
             "Configuration was found with empty values. "
@@ -66,10 +68,11 @@ def copilot(prompt):
         search_api_key,
         search_endpoint,
         use_rag,
+        enable_logging,
     )
 
     # Setup conversation engine
-    engine = ConversationEngine(openai)
+    engine = ConversationEngine(openai, enable_logging)
 
     # Send the prompt to the engine
     response = engine.send_prompt(prompt)
@@ -97,7 +100,7 @@ def copilot(prompt):
             print(f"Explanation: {response[EXPLANATION_KEY]}")
 
         # Execute the command and show the output
-        print(f"\n{execute(response[COMMAND_KEY])}")
+        print(f"\n{execute(response[COMMAND_KEY], enable_logging)}")
     else:
         # Show Command setting is ignored here because you can't make
         # a choice if you don't see the command first
@@ -110,6 +113,6 @@ def copilot(prompt):
 
         # If the user wants to execute the command, do so
         if run_command:
-            print(f"\n{execute(response[COMMAND_KEY])}")
+            print(f"\n{execute(response[COMMAND_KEY], enable_logging)}")
         else:
             print("Command not executed.")

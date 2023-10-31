@@ -18,6 +18,7 @@ def set_configuration(
     autorun,
     show_command,
     use_rag,
+    enable_logging,
 ):
     update_configuration(
         openai_api_key,
@@ -29,4 +30,5 @@ def set_configuration(
         autorun,
         show_command,
         use_rag,
+        enable_logging,
     )

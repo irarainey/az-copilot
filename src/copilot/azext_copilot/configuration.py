@@ -34,6 +34,7 @@ def get_configuration():
         autorun = config["Copilot"]["AutoRun"]
         show_command = config["Copilot"]["ShowCommand"]
         use_rag = config["Copilot"]["UseRAG"]
+        enable_logging = config["Copilot"]["EnableLogging"]
 
         return (
             openai_api_key,
@@ -45,6 +46,7 @@ def get_configuration():
             autorun,
             show_command,
             use_rag,
+            enable_logging,
         )
     else:
         # If it doesn't exist, create a new configuration file with default values
@@ -70,6 +72,7 @@ def update_configuration(
     autorun,
     show_command,
     use_rag,
+    enable_logging,
 ):
     # Define the name and path of the configuration file
     config_file = Path.home() / CONFIG_PATH / CONFIG_FILENAME
@@ -86,6 +89,7 @@ def update_configuration(
         autorun,
         show_command,
         use_rag,
+        enable_logging,
     )
     write_config_file(config_file, config)
 
@@ -115,6 +119,7 @@ def update_config_values(
     autorun,
     show_command,
     use_rag,
+    enable_logging,
 ):
     # Update the values in the config object
     if openai_api_key is not None:
@@ -148,6 +153,13 @@ def update_config_values(
     if use_rag is not None:
         config["Copilot"]["UseRAG"] = (
             use_rag == "True" or use_rag == "true" or use_rag is True
+        )
+
+    if enable_logging is not None:
+        config["Copilot"]["EnableLogging"] = (
+            enable_logging == "True"
+            or enable_logging == "true"
+            or enable_logging is True
         )
 
     return config

@@ -102,6 +102,13 @@ class CopilotCommandsLoader(AzCommandsLoader):
                 help="Boolean value to enable or disable RAG.",
                 required=False,
             )
+            # Define the use logging command argument
+            c.argument(
+                "enable_logging",
+                options_list=["--enable-logging", "-l"],
+                help="Boolean value to enable or disable logging.",
+                required=False,
+            )
 
 
 COMMAND_LOADER_CLS = CopilotCommandsLoader

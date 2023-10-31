@@ -27,6 +27,7 @@ class OpenAIService:
         search_api_key,
         search_endpoint,
         use_rag,
+        enable_logging,
     ):
         # Define the key variables for the OpenAI API
         self.openai_api_key = openai_api_key
@@ -36,6 +37,7 @@ class OpenAIService:
         self.search_api_key = search_api_key
         self.search_endpoint = search_endpoint
         self.use_rag = use_rag
+        self.enable_logging = enable_logging
 
         # Create a new instance of the semantic kernel
         self.kernel = semantic_kernel.Kernel()
@@ -132,10 +134,19 @@ class OpenAIService:
             for result in search_results:
                 documentation += f"\n{result.description}\n{result.text}\n"
 
+            if self.enable_logging:
+                print(f"[OPENAI|SEND PROMPT] Search Result: {documentation}")
+
         # Define the context variables
         context["az_documentation"] = documentation
         context["chat_history"] = history_message
         context["user_input"] = prompt
+
+        if self.enable_logging:
+            print(f"[OPENAI|SEND PROMPT] History: {history_message}")
+
+        if self.enable_logging:
+            print(f"[OPENAI|SEND PROMPT] Prompt: {prompt}")
 
         # Invoke the semantic function
         return await chat_function.invoke_async(context=context)
