@@ -1,8 +1,9 @@
 import asyncio
-import json
 import semantic_kernel
 from azext_copilot.constants import (
     SEARCH_INDEX_NAME,
+    SEARCH_RELEVANCE_THRESHOLD,
+    SEARCH_RESULT_COUNT,
     SEARCH_VECTOR_SIZE,
     SYSTEM_MESSAGE,
 )
@@ -79,7 +80,7 @@ class OpenAIService:
         # Create a new prompt template
         prompt_template = semantic_kernel.ChatPromptTemplate(
             """
-            Relevant Azure CLI Documentation: {{$relevant_documentation}}
+            Azure CLI Documentation: {{$az_documentation}}
             History: {{$chat_history}}
             Prompt: {{$user_input}}
             """,
@@ -113,22 +114,19 @@ class OpenAIService:
         context = self.kernel.create_new_context()
 
         # Search the memory store for any relevant documentation
-        documentation = await context.memory.search_async(
+        search_results = await context.memory.search_async(
             collection=SEARCH_INDEX_NAME,
             query=prompt,
-            limit=10,
-            min_relevance_score=0.8,
+            limit=SEARCH_RESULT_COUNT,
+            min_relevance_score=SEARCH_RELEVANCE_THRESHOLD,
         )
 
-        for result in documentation:
-            print(json.dumps(result.text))
-            print(json.dumps(result.description))
-            print(json.dumps(result.additional_metadata))
-
-        exit(0)
+        documentation = ""
+        for result in search_results:
+            documentation += f"\n{result.description}\n{result.text}\n"
 
         # Define the context variables
-        context["relevant_documentation"] = ""
+        context["az_documentation"] = documentation
         context["chat_history"] = history_message
         context["user_input"] = prompt
 

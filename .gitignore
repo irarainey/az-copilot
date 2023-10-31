@@ -164,3 +164,4 @@ dist
 
 # Extracted docs
 extract/docs/**
+extract/yml/**

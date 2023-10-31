@@ -1,10 +1,10 @@
-import re
+import os
+import yaml
+import json
+import asyncio
 import datetime
 import requests
-import urllib.request
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
-from html.parser import HTMLParser
 from semantic_kernel import Kernel
 from semantic_kernel.connectors.ai.open_ai import (
     AzureTextEmbedding,
@@ -12,123 +12,105 @@ from semantic_kernel.connectors.ai.open_ai import (
 from semantic_kernel.connectors.memory.azure_cognitive_search import (
     AzureCognitiveSearchMemoryStore,
 )
-import asyncio
-import nltk
-
 from azext_copilot.configuration import get_configuration
 from azext_copilot.constants import (
-    CLI_DOCUMENTATION_DOMAIN,
     CLI_DOCUMENTATION_URL,
+    RAW_CLI_DOCUMENTATION_URL,
     SEARCH_INDEX_NAME,
-    HTTP_URL_PATTERN,
+    SEARCH_VECTOR_SIZE,
 )
 
 
-# Create a class to parse the HTML and get the hyperlinks
-class HyperlinkParser(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        # Create a list to store the hyperlinks
-        self.hyperlinks = []
-
-    # Override the HTMLParser's handle_starttag method to get the hyperlinks
-    def handle_starttag(self, tag, attrs):
-        attrs = dict(attrs)
-
-        # If the tag is an anchor tag and it has an href attribute, add the href attribute to the list of hyperlinks
-        if tag == "a" and "href" in attrs:
-            self.hyperlinks.append(attrs["href"])
+def soup_to_dict(element):
+    if element.name:
+        result = {"tag": element.name}
+        if element.contents:
+            result["contents"] = [soup_to_dict(e) for e in element.contents]
+        if element.attrs:
+            result["attributes"] = dict(element.attrs)
+        return result
+    else:
+        return element.string
 
 
-# Function to get the hyperlinks from a URL
-def get_hyperlinks(url):
-    # Try to open the URL and read the HTML
-    try:
-        # Open the URL and read the HTML
-        with urllib.request.urlopen(url) as response:
-            # If the response is not HTML, return an empty list
-            if not response.info().get("Content-Type").startswith("text/html"):
-                return []
-
-            # Decode the HTML
-            html = response.read().decode("utf-8")
-    except Exception as e:
-        print(e)
-        return []
-
-    # Create the HTML Parser and then Parse the HTML to get hyperlinks
-    parser = HyperlinkParser()
-    parser.feed(html)
-
-    return parser.hyperlinks
-
-
-# Function to get the hyperlinks from a URL that are within the same domain
-def get_domain_hyperlinks(local_domain, url):
-    clean_links = []
-    for link in set(get_hyperlinks(url)):
-        clean_link = None
-
-        # If the link is a URL, check if it is within the same domain
-        if re.search(HTTP_URL_PATTERN, link):
-            # Parse the URL and check if the domain is the same
-            url_obj = urlparse(link)
-            if url_obj.netloc == local_domain:
-                clean_link = link
-
-        # If the link is not a URL, check if it is a relative link
-        else:
-            if link.startswith("/"):
-                link = link[1:]
-            elif (
-                link.startswith("#")
-                or link.startswith("mailto:")
-                or link.startswith("tel:")
-            ):
-                continue
-            clean_link = "https://" + local_domain + "/" + link
-
-        if clean_link is not None:
-            if clean_link.endswith("/"):
-                clean_link = clean_link[:-1]
-            clean_links.append(clean_link)
-
-    # Return the list of hyperlinks that are within the same domain
-    return list(set(clean_links))
-
-
-def extract_content(url):
-    response = requests.get(url)
+def extract_documentation_to_files():
+    response = requests.get(CLI_DOCUMENTATION_URL)
     content = response.content
     soup = BeautifulSoup(content, features="html.parser")
 
-    for data in soup(["table"]):
-        data.decompose()
+    soup_dict = soup_to_dict(soup)
+    contents = soup_dict["contents"][0]
 
-    title = soup.find("title").text
-    body = soup.find("div", {"class": "content"})
+    json_contents = json.loads(contents)
+    items = json_contents["payload"]["tree"]["items"]
 
-    if body is None:
-        return None, None
+    docs_path_exists = os.path.exists("extract/docs")
+    yml_path_exists = os.path.exists("extract/yml")
 
-    lines = (line.strip() for line in body.get_text().splitlines())
-    lines = "\n".join(
-        line
-        for line in lines
-        if line
-        and line != "Reference"
-        and line != "Feedback"
-        and line != "In this article"
-        and line != "Edit"
-        and line != "Note"
-        and line
-        != "This command group has commands that are defined in both Azure CLI and at least one extension. Install each extension to benefit from its extended capabilities. Learn more about extensions."  # noqa
-    )
+    if not docs_path_exists:
+        os.makedirs("extract/docs")
 
-    return title, lines
+    if not yml_path_exists:
+        os.makedirs("extract/yml")
+
+    for item in items:
+        if item["contentType"] == "file" and item["path"].endswith("/TOC.yml") is False:
+            file = f'{RAW_CLI_DOCUMENTATION_URL}/{item["path"]}'
+            response = requests.get(file)
+            content = response.content.decode("utf-8")
+
+            parts = item["path"].split("/")
+            y = open(f"extract/yml/{parts[-1]}", "w")
+            y.write(content)
+            y.close()
+
+            parsed_content = yaml.safe_load(content)
+
+            if "directCommands" in parsed_content:
+                for command in parsed_content["directCommands"]:
+                    print(f'Extracting documentation for \'{command["name"]}\'')
+                    copy = f'Command: {command["name"]}'
+                    copy += f'\nDescription: {command["summary"]} {command["description"] + "" if "description" in command else ""}'
+                    copy += f'\nSyntax:\n\t{command["syntax"]}'
+
+                    if "examples" in command:
+                        copy += "\nExamples:"
+                        for example in command["examples"]:
+                            cleaned_syntax = example["syntax"].replace("\n", "\n\t\t")
+                            copy += f'\n\t{example["summary"]}:\n\t\t{cleaned_syntax}'
+
+                    if "requiredParameters" in command:
+                        copy += "\nRequired Parameters:"
+                        for req_param in command["requiredParameters"]:
+                            copy += f'\n\t{req_param["name"]}'
+                            copy += f'\n\t\t{req_param["summary"]}'
+
+                    if "optionalParameters" in command:
+                        copy += "\nOptional Parameters:"
+                        for opt_param in command["optionalParameters"]:
+                            copy += f'\n\t{opt_param["name"]}'
+
+                            if "summary" in opt_param:
+                                copy += f'\n\t\t{opt_param["summary"]}'
+
+                            if "defaultValue" in opt_param:
+                                copy += (
+                                    f'\n\t\tDefault Value: {opt_param["defaultValue"]}'
+                                )
+
+                            if "parameterValueGroup" in opt_param:
+                                copy += f'\n\t\tAccepted Values: {opt_param["parameterValueGroup"]}'
+
+            f = open(f'extract/docs/{command["name"]}.txt', "w")
+            f.write(copy)
+            f.close()
 
 
 async def load():
+
+    extract_documentation_to_files()
+    exit(0)
+
     (
         openai_api_key,
         openai_endpoint,
@@ -142,8 +124,6 @@ async def load():
 
     kernel = Kernel()
 
-    vector_size = 1536
-
     kernel.add_text_embedding_generation_service(
         "text-embedding-ada-002",
         AzureTextEmbedding(
@@ -155,46 +135,26 @@ async def load():
 
     kernel.register_memory_store(
         memory_store=AzureCognitiveSearchMemoryStore(
-            vector_size, search_endpoint, search_api_key, SEARCH_INDEX_NAME
+            SEARCH_VECTOR_SIZE, search_endpoint, search_api_key, SEARCH_INDEX_NAME
         )
     )
 
     now = datetime.date.today()
-
-    print("Getting documentation links")
-    links = get_domain_hyperlinks(CLI_DOCUMENTATION_DOMAIN, CLI_DOCUMENTATION_URL)
-
-    print(f"Found {len(links)} links")
-
     counter = 0
 
     for url in links:
-        print(f"Extracting text from {url}")
-        title, copy = extract_content(url)
+        # title, copy = extract_content(url)
 
-        if title is None or copy is None:
-            continue
-
-        if title.startswith("404 - Content Not Found"):
-            continue
-
-        title = title.replace(" | Microsoft Learn", "")
-
-        print(f"Writing record {title}")
-
-        sentences = nltk.sent_tokenize(copy)  # Tokenize into sentences
-
-        for sentence in sentences:
-            counter += 1
-            await kernel.memory.save_information_async(
-                SEARCH_INDEX_NAME,
-                id=str(counter).zfill(3),
-                text=sentence,
-                description=title,
-                additional_metadata=now,
-            )
+        # for sentence in sentences:
+        # counter += 1
+        # await kernel.memory.save_information_async(
+        #     SEARCH_INDEX_NAME,
+        #     id=str(counter).zfill(6),
+        #     text=copy,
+        #     description=title,
+        #     additional_metadata=now,
+        # )
 
 
 if __name__ == "__main__":
-    nltk.download("punkt")
     asyncio.run(load())

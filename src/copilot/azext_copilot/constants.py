@@ -15,14 +15,17 @@ SEARCH_INDEX_NAME = "az-cli-docs"
 # The Cognitive Search vector size
 SEARCH_VECTOR_SIZE = 1536
 
-# The Azure CLI documentation domain
-CLI_DOCUMENTATION_DOMAIN = "learn.microsoft.com/en-us/cli/azure"
+# The Cognitive Search result count
+SEARCH_RESULT_COUNT = 5
 
-# The Azure CLI documentation URL
-CLI_DOCUMENTATION_URL = "https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest"  # noqa: E501
+# The Cognitive Search relevance threshold
+SEARCH_RELEVANCE_THRESHOLD = 0.8
 
-# The Azure CLI documentation URL pattern
-HTTP_URL_PATTERN = r"^http[s]{0,1}://.+$"
+# The Azure CLI documentation URL on GitHub
+CLI_DOCUMENTATION_URL = "https://github.com/MicrosoftDocs/azure-docs-cli/tree/main/latest/docs-ref-autogen"  # noqa: E501
+
+# The raw Azure CLI documentation URL on GitHub
+RAW_CLI_DOCUMENTATION_URL = "https://raw.githubusercontent.com/MicrosoftDocs/azure-docs-cli/main"  # noqa: E501
 
 # The default configuration values
 DEFAULT_CONFIG = {

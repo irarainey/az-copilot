@@ -34,4 +34,4 @@ all: ## 🤖 Run all the steps together
 
 extract-docs: ## 🤖 Extract the Azure CLI Documentation
 	@figlet $@ || true
-	@rm extract/docs -fdr && python3 extract/main.py
+	@rm extract/docs -fdr && rm extract/yml -fdr && python3 extract/main.py
