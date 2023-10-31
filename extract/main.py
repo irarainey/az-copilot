@@ -4,6 +4,7 @@ import json
 import asyncio
 import datetime
 import requests
+from pathlib import Path
 from bs4 import BeautifulSoup
 from semantic_kernel import Kernel
 from semantic_kernel.connectors.ai.open_ai import (
@@ -15,6 +16,8 @@ from semantic_kernel.connectors.memory.azure_cognitive_search import (
 from azext_copilot.configuration import get_configuration
 from azext_copilot.constants import (
     CLI_DOCUMENTATION_URL,
+    EXTRACTON_DOCS_FOLDER,
+    EXTRACTON_YML_FOLDER,
     RAW_CLI_DOCUMENTATION_URL,
     SEARCH_INDEX_NAME,
     SEARCH_VECTOR_SIZE,
@@ -34,41 +37,39 @@ def soup_to_dict(element):
 
 
 def extract_documentation_to_files():
+    # Get the root page of the documentation
     response = requests.get(CLI_DOCUMENTATION_URL)
     content = response.content
     soup = BeautifulSoup(content, features="html.parser")
 
+    # Extract the contents of the page
     soup_dict = soup_to_dict(soup)
     contents = soup_dict["contents"][0]
 
+    # Convert it to JSON and extract the items collection
     json_contents = json.loads(contents)
     items = json_contents["payload"]["tree"]["items"]
-
-    docs_path_exists = os.path.exists("extract/docs")
-    yml_path_exists = os.path.exists("extract/yml")
-
-    if not docs_path_exists:
-        os.makedirs("extract/docs")
-
-    if not yml_path_exists:
-        os.makedirs("extract/yml")
 
     for item in items:
         if item["contentType"] == "file" and item["path"].endswith("/TOC.yml") is False:
             file = f'{RAW_CLI_DOCUMENTATION_URL}/{item["path"]}'
             response = requests.get(file)
             content = response.content.decode("utf-8")
-
+            print(
+                f'Found \'{file}\''
+            )
             parts = item["path"].split("/")
-            y = open(f"extract/yml/{parts[-1]}", "w")
+            y = open(f"{EXTRACTON_YML_FOLDER}/{parts[-1]}", "w")
             y.write(content)
             y.close()
 
             parsed_content = yaml.safe_load(content)
 
-            if "directCommands" in parsed_content:
+            if "directCommands" in parsed_content:  
                 for command in parsed_content["directCommands"]:
-                    print(f'Extracting documentation for \'{command["name"]}\'')
+                    print(
+                        f'=> Parsing \'{command["name"]}\''
+                    )
                     copy = f'Command: {command["name"]}'
                     copy += f'\nDescription: {command["summary"]} {command["description"] + "" if "description" in command else ""}'
                     copy += f'\nSyntax:\n\t{command["syntax"]}'
@@ -101,15 +102,22 @@ def extract_documentation_to_files():
                             if "parameterValueGroup" in opt_param:
                                 copy += f'\n\t\tAccepted Values: {opt_param["parameterValueGroup"]}'
 
-            f = open(f'extract/docs/{command["name"]}.txt', "w")
-            f.write(copy)
-            f.close()
+                    f = open(f'{EXTRACTON_DOCS_FOLDER}/{command["uid"]}.txt', "w")
+                    f.write(copy)
+                    f.close()
 
 
-async def load():
+async def index():
+    docs_path_exists = os.path.exists(EXTRACTON_DOCS_FOLDER)
+    yml_path_exists = os.path.exists(EXTRACTON_YML_FOLDER)
+
+    if not docs_path_exists:
+        os.makedirs(EXTRACTON_DOCS_FOLDER)
+
+    if not yml_path_exists:
+        os.makedirs(EXTRACTON_YML_FOLDER)
 
     extract_documentation_to_files()
-    exit(0)
 
     (
         openai_api_key,
@@ -142,19 +150,28 @@ async def load():
     now = datetime.date.today()
     counter = 0
 
-    for url in links:
-        # title, copy = extract_content(url)
+    docs_path = Path(EXTRACTON_DOCS_FOLDER)
+    for file_path in docs_path.iterdir():
+        if file_path.is_file():
+            counter += 1
+            with file_path.open('r') as file:
+                description = ''.join(next(file) for _ in range(2)).replace('\n', '')
+                file.seek(0)
+                content = file.read()
 
-        # for sentence in sentences:
-        # counter += 1
-        # await kernel.memory.save_information_async(
-        #     SEARCH_INDEX_NAME,
-        #     id=str(counter).zfill(6),
-        #     text=copy,
-        #     description=title,
-        #     additional_metadata=now,
-        # )
+            print(
+                f'=> Indexing \'{file_path.name}\'')
+
+            await kernel.memory.save_information_async(
+                SEARCH_INDEX_NAME,
+                id=str(counter).zfill(4),
+                text=content,
+                description=description,
+                additional_metadata=now,
+            )
+
+    print("\nIndexing complete\n")
 
 
 if __name__ == "__main__":
-    asyncio.run(load())
+    asyncio.run(index())

@@ -27,6 +27,12 @@ CLI_DOCUMENTATION_URL = "https://github.com/MicrosoftDocs/azure-docs-cli/tree/ma
 # The raw Azure CLI documentation URL on GitHub
 RAW_CLI_DOCUMENTATION_URL = "https://raw.githubusercontent.com/MicrosoftDocs/azure-docs-cli/main"  # noqa: E501
 
+# The directory where the extracted documentation is stored
+EXTRACTON_DOCS_FOLDER = "extract/docs"
+
+# The directory where the extracted YAML files are stored
+EXTRACTON_YML_FOLDER = "extract/yml"
+
 # The default configuration values
 DEFAULT_CONFIG = {
     "AzureOpenAI": {
