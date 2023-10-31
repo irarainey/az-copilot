@@ -29,6 +29,10 @@ deploy: ## 🤖 Deploy the project locally
 	@figlet $@ || true
 	@make build && pip install dist/*.whl --force-reinstall
 
+deploy-infra: ## 🤖 Deploy the required Azure infrastructure
+	@figlet $@ || true
+	@infrastructure/deploy.sh
+
 extract-docs: ## 🤖 Extract the Azure CLI Documentation
 	@figlet $@ || true
 	@rm extract/docs -fdr && rm extract/yml -fdr && python3 extract/main.py
