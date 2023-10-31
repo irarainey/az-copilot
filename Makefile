@@ -29,9 +29,6 @@ deploy: ## 🤖 Deploy the project locally
 	@figlet $@ || true
 	@make build && pip install dist/*.whl --force-reinstall
 
-all: ## 🤖 Run all the steps together
-	@make clean && make install && make deploy
-
 extract-docs: ## 🤖 Extract the Azure CLI Documentation
 	@figlet $@ || true
 	@rm extract/docs -fdr && rm extract/yml -fdr && python3 extract/main.py
