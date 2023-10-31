@@ -95,6 +95,13 @@ class CopilotCommandsLoader(AzCommandsLoader):
                 help="Boolean value to show or hide commands.",
                 required=False,
             )
+            # Define the use RAG command argument
+            c.argument(
+                "use_rag",
+                options_list=["--use-rag", "-r"],
+                help="Boolean value to enable or disable RAG.",
+                required=False,
+            )
 
 
 COMMAND_LOADER_CLS = CopilotCommandsLoader

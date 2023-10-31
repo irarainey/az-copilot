@@ -55,9 +55,7 @@ def extract_documentation_to_files():
             file = f'{RAW_CLI_DOCUMENTATION_URL}/{item["path"]}'
             response = requests.get(file)
             content = response.content.decode("utf-8")
-            print(
-                f'Found \'{file}\''
-            )
+            print(f"Found '{file}'")
             parts = item["path"].split("/")
             y = open(f"{EXTRACTON_YML_FOLDER}/{parts[-1]}", "w")
             y.write(content)
@@ -65,13 +63,16 @@ def extract_documentation_to_files():
 
             parsed_content = yaml.safe_load(content)
 
-            if "directCommands" in parsed_content:  
+            if "directCommands" in parsed_content:
                 for command in parsed_content["directCommands"]:
-                    print(
-                        f'=> Parsing \'{command["name"]}\''
-                    )
+                    print(f'=> Parsing \'{command["uid"]}\'')
                     copy = f'Command: {command["name"]}'
                     copy += f'\nDescription: {command["summary"]} {command["description"] + "" if "description" in command else ""}'
+                    copy += f'\nType: {command["sourceType"]}'
+
+                    if "extensionSuffix" in command:
+                        copy += f'\nType: {command["extensionSuffix"]}'
+
                     copy += f'\nSyntax:\n\t{command["syntax"]}'
 
                     if "examples" in command:
@@ -102,7 +103,13 @@ def extract_documentation_to_files():
                             if "parameterValueGroup" in opt_param:
                                 copy += f'\n\t\tAccepted Values: {opt_param["parameterValueGroup"]}'
 
-                    f = open(f'{EXTRACTON_DOCS_FOLDER}/{command["uid"]}.txt', "w")
+                    filename = (
+                        command["uid"]
+                        .replace("(", "_")
+                        .replace(")", "_")
+                        .replace("-", "_")
+                    )
+                    f = open(f"{EXTRACTON_DOCS_FOLDER}/{filename}.txt", "w")
                     f.write(copy)
                     f.close()
 
@@ -154,13 +161,14 @@ async def index():
     for file_path in docs_path.iterdir():
         if file_path.is_file():
             counter += 1
-            with file_path.open('r') as file:
-                description = ''.join(next(file) for _ in range(2)).replace('\n', '')
+            with file_path.open("r") as file:
+                line1 = file.readline().strip()
+                line2 = file.readline().strip().replace("Description: ", "")
+                description = f'{line2} (Command: {line1})'
                 file.seek(0)
                 content = file.read()
 
-            print(
-                f'=> Indexing \'{file_path.name}\'')
+            print(f"=> Indexing '{file_path.name}'")
 
             await kernel.memory.save_information_async(
                 SEARCH_INDEX_NAME,

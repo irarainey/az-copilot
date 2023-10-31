@@ -17,6 +17,7 @@ def set_configuration(
     search_endpoint,
     autorun,
     show_command,
+    use_rag,
 ):
     update_configuration(
         openai_api_key,
@@ -27,4 +28,5 @@ def set_configuration(
         search_endpoint,
         autorun,
         show_command,
+        use_rag,
     )

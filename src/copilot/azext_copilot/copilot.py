@@ -25,6 +25,7 @@ def copilot(prompt):
         search_endpoint,
         autorun,
         show_command,
+        use_rag,
     ) = get_configuration()
 
     # Determine if configuration has been set
@@ -37,6 +38,7 @@ def copilot(prompt):
         or search_endpoint is None
         or autorun is None
         or show_command is None
+        or use_rag is None
     ):
         print(
             "Configuration was found with empty values. "
@@ -63,6 +65,7 @@ def copilot(prompt):
         embedding_deployment_name,
         search_api_key,
         search_endpoint,
+        use_rag,
     )
 
     # Setup conversation engine

@@ -48,6 +48,7 @@ DEFAULT_CONFIG = {
     "Copilot": {
         "AutoRun": False,
         "ShowCommand": True,
+        "UseRAG": False,
     },
 }
 

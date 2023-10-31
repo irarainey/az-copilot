@@ -26,6 +26,7 @@ class OpenAIService:
         embedding_deployment_name,
         search_api_key,
         search_endpoint,
+        use_rag,
     ):
         # Define the key variables for the OpenAI API
         self.openai_api_key = openai_api_key
@@ -34,6 +35,7 @@ class OpenAIService:
         self.embedding_deployment_name = embedding_deployment_name
         self.search_api_key = search_api_key
         self.search_endpoint = search_endpoint
+        self.use_rag = use_rag
 
         # Create a new instance of the semantic kernel
         self.kernel = semantic_kernel.Kernel()
@@ -113,17 +115,22 @@ class OpenAIService:
         # Create a new context
         context = self.kernel.create_new_context()
 
-        # Search the memory store for any relevant documentation
-        search_results = await context.memory.search_async(
-            collection=SEARCH_INDEX_NAME,
-            query=prompt,
-            limit=SEARCH_RESULT_COUNT,
-            min_relevance_score=SEARCH_RELEVANCE_THRESHOLD,
-        )
-
+        # Set the RAG data to empty
         documentation = ""
-        for result in search_results:
-            documentation += f"\n{result.description}\n{result.text}\n"
+
+        # If RAG is enabled search the memory store for relevant documentation
+        if self.use_rag:
+            # Search the memory store for any relevant documentation
+            search_results = await context.memory.search_async(
+                collection=SEARCH_INDEX_NAME,
+                query=prompt,
+                limit=SEARCH_RESULT_COUNT,
+                min_relevance_score=SEARCH_RELEVANCE_THRESHOLD,
+            )
+
+            # Build the result of the search
+            for result in search_results:
+                documentation += f"\n{result.description}\n{result.text}\n"
 
         # Define the context variables
         context["az_documentation"] = documentation
