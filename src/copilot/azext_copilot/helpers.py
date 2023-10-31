@@ -27,7 +27,7 @@ def execute(command, enable_logging):
     if stderr.startswith(
         "WARNING: The command requires the extension load. It will be installed first."
     ):
-        print("This command requires an extension. Installing...")
+        print("This command requires an extension. Installing it now...")
 
     if enable_logging:
         print(f"[HELPERS|EXECUTE] stdout: {stdout}")
