@@ -67,7 +67,7 @@ def extract_documentation_to_files():
                 for command in parsed_content["directCommands"]:
                     print(f'=> Parsing \'{command["uid"]}\'')
                     copy = f'Command: {command["name"]}'
-                    copy += f'\nDescription: {command["summary"]} {command["description"] + "" if "description" in command else ""}'
+                    copy += f'\nDescription: {command["summary"]} {command["description"] + "" if "description" in command else ""}'  # noqa: E501
                     copy += f'\nType: {command["sourceType"]}'
 
                     if "extensionSuffix" in command:
@@ -101,7 +101,7 @@ def extract_documentation_to_files():
                                 )
 
                             if "parameterValueGroup" in opt_param:
-                                copy += f'\n\t\tAccepted Values: {opt_param["parameterValueGroup"]}'
+                                copy += f'\n\t\tAccepted Values: {opt_param["parameterValueGroup"]}'  # noqa: E501
 
                     filename = (
                         command["uid"]
