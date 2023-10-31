@@ -20,6 +20,7 @@ class CopilotCommandsLoader(AzCommandsLoader):
         with self.command_group("") as g:
             g.custom_command("copilot", "call_openai")
             g.custom_command("copilot config set", "set_configuration")
+            g.custom_command("copilot config show", "show_configuration")
 
         # Return the command table
         return self.command_table

@@ -1,4 +1,7 @@
-from azext_copilot.configuration import update_configuration
+import json
+from pathlib import Path
+from azext_copilot.configuration import read_config_file, update_configuration
+from azext_copilot.constants import CONFIG_FILENAME, CONFIG_PATH
 from azext_copilot.copilot import copilot
 
 
@@ -32,3 +35,8 @@ def set_configuration(
         use_rag,
         enable_logging,
     )
+
+
+def show_configuration():
+    config_file = Path.home() / CONFIG_PATH / CONFIG_FILENAME
+    print(json.dumps(read_config_file(config_file), indent=4))
