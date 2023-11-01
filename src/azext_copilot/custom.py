@@ -1,15 +1,14 @@
-import json
-from azext_copilot.configuration import read_config, update_config
+from azext_copilot.configuration import show_config, update_config
 from azext_copilot.copilot import copilot
 
 
 # This is the entry point for the AZ CLI extension to call the Copilot
-def call_copilot(prompt):
+def copilot_cmd(prompt):
     copilot(prompt)
 
 
 # This is the entry point for the AZ CLI extension to set the config
-def set_config(
+def set_config_cmd(
     openai_api_key,
     openai_endpoint,
     completion_deployment_name,
@@ -36,5 +35,5 @@ def set_config(
 
 
 # This is the entry point for the AZ CLI extension to show the config
-def show_config():
-    print(json.dumps(read_config(), indent=4))
+def show_config_cmd():
+    print(show_config())

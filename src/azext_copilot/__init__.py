@@ -18,9 +18,9 @@ class CopilotCommandsLoader(AzCommandsLoader):
     def load_command_table(self, _):
         # The command_group method is used to create a new command group
         with self.command_group("") as g:
-            g.custom_command("copilot", "call_copilot")
-            g.custom_command("copilot config set", "set_config")
-            g.custom_command("copilot config show", "show_config")
+            g.custom_command("copilot", "copilot_cmd")
+            g.custom_command("copilot config set", "set_config_cmd")
+            g.custom_command("copilot config show", "show_config_cmd")
 
         # Return the command table
         return self.command_table

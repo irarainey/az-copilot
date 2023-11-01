@@ -31,10 +31,11 @@ def execute(command, enable_logging):
         has_err = False
         execute(f"{command} --yes", enable_logging)
 
-    if stderr.startswith(
-        "WARNING: The command requires the extension load. It will be installed first."
-    ):
+    if stderr.startswith("WARNING: The command requires the extension"):
         has_err = False
-        print("This command requires an extension. Installed it for you.")
+        print(
+            "This command requires an extension, which has been installed for you."
+        )
+        execute(command, enable_logging)
 
     return stdout, stderr, has_err

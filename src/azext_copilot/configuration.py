@@ -19,6 +19,24 @@ from azext_copilot.constants import (
 )
 
 
+# Show the config values
+def show_config():
+    config = read_config()
+    openai_key = config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY]
+    cognitive_key = config[COGNITIVE_SEARCH_CONFIG_SECTION][API_KEY_CONFIG_KEY]
+
+    # Mask the API key if present
+    if openai_key is not None and openai_key != "":
+        config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY] = "********"
+
+    # Mask the API key if present
+    if cognitive_key is not None and cognitive_key != "":
+        config[COGNITIVE_SEARCH_CONFIG_SECTION][API_KEY_CONFIG_KEY] = "********"
+
+    # Return the config as JSON
+    return json.dumps(config, indent=4)
+
+
 # Read the config file
 def read_config():
     # Get the path of the config file
