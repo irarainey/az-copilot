@@ -72,13 +72,13 @@ def extract_documentation_to_files(url):
                     for command in parsed_content["directCommands"]:
                         print(f'=> Parsing \'{command["uid"]}\'')
                         copy = f'Command: {command["name"]}'
-                        copy += f'\nDescription: {command["summary"]} {command["description"] + "" if "description" in command else ""}'  # noqa: E501
+                        copy += f'\nDescription: {command["summary"] + "" if "summary" in command else ""} {command["description"] + "" if "description" in command else ""}'  # noqa: E501
                         copy += f'\nType: {command["sourceType"]}'
 
                         if "extensionSuffix" in command:
                             copy += f'\nType: {command["extensionSuffix"]}'
 
-                        copy += f'\nSyntax:\n\t{command["syntax"]}'
+                        copy += f'\nSyntax:\n\t{command["syntax"] + "" if "syntax" in command else ""}'  # noqa: E501
 
                         if "examples" in command:
                             copy += "\nExamples:"
@@ -87,7 +87,7 @@ def extract_documentation_to_files(url):
                                     "\n", "\n\t\t"
                                 )
                                 copy += (
-                                    f'\n\t{example["summary"]}:\n\t\t{cleaned_syntax}'
+                                    f'\n\t{example["summary"] + "" if "summary" in example else ""}:\n\t\t{cleaned_syntax}'  # noqa: E501
                                 )
 
                         if "requiredParameters" in command:
