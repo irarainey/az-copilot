@@ -7,7 +7,7 @@ class CopilotCommandsLoader(AzCommandsLoader):
         from azure.cli.core.commands import CliCommandType
 
         # The custom command type is used to load the custom commands
-        custom_type = CliCommandType(operations_tmpl="azext_copilot.custom#{}")
+        custom_type = CliCommandType(operations_tmpl="azext_copilot.commands#{}")
 
         # The super method is used to initialize the base class
         super(CopilotCommandsLoader, self).__init__(
