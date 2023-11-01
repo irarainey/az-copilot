@@ -13,11 +13,16 @@ from semantic_kernel.connectors.ai.open_ai import (
 from semantic_kernel.connectors.memory.azure_cognitive_search import (
     AzureCognitiveSearchMemoryStore,
 )
-from azext_copilot.configuration import get_configuration
+from azext_copilot.configuration import check_config, read_config
 from azext_copilot.constants import (
+    API_KEY_CONFIG_KEY,
     CLI_DOCUMENTATION_URL,
+    COGNITIVE_SEARCH_CONFIG_SECTION,
+    EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY,
+    ENDPOINT_CONFIG_KEY,
     EXTRACTON_DOCS_FOLDER,
     EXTRACTON_YML_FOLDER,
+    OPENAI_CONFIG_SECTION,
     RAW_CLI_DOCUMENTATION_URL,
     SEARCH_INDEX_NAME,
     SEARCH_VECTOR_SIZE,
@@ -126,16 +131,26 @@ async def index():
 
     extract_documentation_to_files()
 
-    (
-        openai_api_key,
-        openai_endpoint,
-        _,
-        embedding_deployment_name,
-        search_api_key,
-        search_endpoint,
-        _,
-        _,
-    ) = get_configuration()
+    # Get configuration values
+    config = read_config()
+
+    # Determine if configuration has been set
+    if not check_config(config):
+        print(
+            "Configuration was found with empty values. "
+            "Use 'az copilot config set' to set the config values. "
+            "Run 'az copilot config set --help' to see options."
+        )
+        return
+
+    # Set variables from config
+    openai_api_key = config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY]
+    openai_endpoint = config[OPENAI_CONFIG_SECTION][ENDPOINT_CONFIG_KEY]
+    embedding_deployment_name = config[OPENAI_CONFIG_SECTION][
+        EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY
+    ]
+    search_api_key = config[COGNITIVE_SEARCH_CONFIG_SECTION][API_KEY_CONFIG_KEY]
+    search_endpoint = config[COGNITIVE_SEARCH_CONFIG_SECTION][ENDPOINT_CONFIG_KEY]
 
     kernel = Kernel()
 
@@ -164,7 +179,7 @@ async def index():
             with file_path.open("r") as file:
                 line1 = file.readline().strip()
                 line2 = file.readline().strip().replace("Description: ", "")
-                description = f'{line2} (Command: {line1})'
+                description = f"{line2} (Command: {line1})"
                 file.seek(0)
                 content = file.read()
 

@@ -3,8 +3,16 @@ from azext_copilot.conversation_engine import ConversationEngine
 from azext_copilot.services.authentication import AuthenticationService
 from azext_copilot.services.openai import OpenAIService
 from azext_copilot.helpers import execute
-from azext_copilot.configuration import get_configuration
-from azext_copilot.constants import COMMAND_KEY, PROBLEM_KEY, EXPLANATION_KEY
+from azext_copilot.configuration import check_config, read_config
+from azext_copilot.constants import (
+    AUTO_RUN_CONFIG_KEY,
+    COMMAND_KEY,
+    COPILOT_CONFIG_SECTION,
+    ENABLE_LOGGING_CONFIG_KEY,
+    PROBLEM_KEY,
+    EXPLANATION_KEY,
+    SHOW_COMMAND_CONFIG_KEY,
+)
 
 
 def invoke():
@@ -16,37 +24,21 @@ def invoke():
 
 def copilot(prompt):
     # Get configuration values
-    (
-        openai_api_key,
-        openai_endpoint,
-        completion_deployment_name,
-        embedding_deployment_name,
-        search_api_key,
-        search_endpoint,
-        autorun,
-        show_command,
-        use_rag,
-        enable_logging,
-    ) = get_configuration()
+    config = read_config()
 
     # Determine if configuration has been set
-    if (
-        openai_api_key is None
-        or openai_endpoint is None
-        or completion_deployment_name is None
-        or embedding_deployment_name is None
-        or search_api_key is None
-        or search_endpoint is None
-        or autorun is None
-        or show_command is None
-        or use_rag is None
-        or enable_logging is None
-    ):
+    if not check_config(config):
         print(
             "Configuration was found with empty values. "
-            "Run 'az copilot config set' to set the configuration values."
+            "Use 'az copilot config set' to set the config values. "
+            "Run 'az copilot config set --help' to see options."
         )
         return
+
+    # Set variables from config
+    enable_logging = config[COPILOT_CONFIG_SECTION][ENABLE_LOGGING_CONFIG_KEY]
+    autorun = config[COPILOT_CONFIG_SECTION][AUTO_RUN_CONFIG_KEY]
+    show_command = config[COPILOT_CONFIG_SECTION][SHOW_COMMAND_CONFIG_KEY]
 
     # Check authentication
     authentication_service = AuthenticationService()
@@ -60,19 +52,10 @@ def copilot(prompt):
         return
 
     # Setup OpenAI service
-    openai = OpenAIService(
-        openai_api_key,
-        openai_endpoint,
-        completion_deployment_name,
-        embedding_deployment_name,
-        search_api_key,
-        search_endpoint,
-        use_rag,
-        enable_logging,
-    )
+    openai = OpenAIService(config)
 
     # Setup conversation engine
-    engine = ConversationEngine(openai, enable_logging)
+    engine = ConversationEngine(openai, config)
 
     # Send the prompt to the engine
     response = engine.send_prompt(prompt)

@@ -1,18 +1,23 @@
 import ast
 import json
-from azext_copilot.constants import COMMAND_KEY, PROBLEM_KEY
+from azext_copilot.constants import (
+    COMMAND_KEY,
+    COPILOT_CONFIG_SECTION,
+    ENABLE_LOGGING_CONFIG_KEY,
+    PROBLEM_KEY,
+)
 
 
 # The conversation engine class
 class ConversationEngine:
-    def __init__(self, openai_service, enable_logging):
+    def __init__(self, openai_service, config):
         self.chat_history = []
         self._commands = None
         self._problems = None
 
         # Setup services
         self.openai_client_service = openai_service
-        self.enable_logging = enable_logging
+        self.enable_logging = config[COPILOT_CONFIG_SECTION][ENABLE_LOGGING_CONFIG_KEY]
 
     def send_prompt(self, prompt):
         self.chat_history.append(("q", prompt))

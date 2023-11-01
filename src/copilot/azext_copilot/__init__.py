@@ -18,9 +18,9 @@ class CopilotCommandsLoader(AzCommandsLoader):
     def load_command_table(self, _):
         # The command_group method is used to create a new command group
         with self.command_group("") as g:
-            g.custom_command("copilot", "call_openai")
-            g.custom_command("copilot config set", "set_configuration")
-            g.custom_command("copilot config show", "show_configuration")
+            g.custom_command("copilot", "call_copilot")
+            g.custom_command("copilot config set", "set_config")
+            g.custom_command("copilot config show", "show_config")
 
         # Return the command table
         return self.command_table
@@ -40,7 +40,6 @@ class CopilotCommandsLoader(AzCommandsLoader):
 
         # Create a new argument context for the copilot config set command
         with self.argument_context("copilot config set") as c:
-            # Define the use logging command argument
             # Define the OpenAI api key argument
             c.argument(
                 "openai_api_key",
@@ -97,12 +96,6 @@ class CopilotCommandsLoader(AzCommandsLoader):
                 help="Boolean value to show or hide commands.",
                 required=False,
             )
-            c.argument(
-                "enable_logging",
-                options_list=["--enable-logging", "-l"],
-                help="Boolean value to enable or disable logging.",
-                required=False,
-            )
             # Define the use RAG command argument
             c.argument(
                 "use_rag",
@@ -110,6 +103,13 @@ class CopilotCommandsLoader(AzCommandsLoader):
                 help="Boolean value to enable or disable RAG.",
                 required=False,
             )
-            
+            # Define the use logging command argument
+            c.argument(
+                "enable_logging",
+                options_list=["--enable-logging", "-l"],
+                help="Boolean value to enable or disable logging.",
+                required=False,
+            )
+
 
 COMMAND_LOADER_CLS = CopilotCommandsLoader

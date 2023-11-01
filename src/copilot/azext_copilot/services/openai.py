@@ -1,11 +1,20 @@
 import asyncio
 import semantic_kernel
 from azext_copilot.constants import (
+    API_KEY_CONFIG_KEY,
+    COGNITIVE_SEARCH_CONFIG_SECTION,
+    COMPLETION_DEPLOYMENT_NAME_CONFIG_KEY,
+    COPILOT_CONFIG_SECTION,
+    EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY,
+    ENABLE_LOGGING_CONFIG_KEY,
+    ENDPOINT_CONFIG_KEY,
+    OPENAI_CONFIG_SECTION,
     SEARCH_INDEX_NAME,
     SEARCH_RELEVANCE_THRESHOLD,
     SEARCH_RESULT_COUNT,
     SEARCH_VECTOR_SIZE,
     SYSTEM_MESSAGE,
+    USE_RAG_CONFIG_KEY,
 )
 from semantic_kernel.connectors.ai.open_ai import (
     AzureChatCompletion,
@@ -18,26 +27,24 @@ from semantic_kernel.connectors.memory.azure_cognitive_search import (
 
 # This class is used to interact with the OpenAI API
 class OpenAIService:
-    def __init__(
-        self,
-        openai_api_key,
-        openai_api_endpoint,
-        completion_deployment_name,
-        embedding_deployment_name,
-        search_api_key,
-        search_endpoint,
-        use_rag,
-        enable_logging,
-    ):
-        # Define the key variables for the OpenAI API
-        self.openai_api_key = openai_api_key
-        self.openai_api_endpoint = openai_api_endpoint
-        self.completion_deployment_name = completion_deployment_name
-        self.embedding_deployment_name = embedding_deployment_name
-        self.search_api_key = search_api_key
-        self.search_endpoint = search_endpoint
-        self.use_rag = use_rag
-        self.enable_logging = enable_logging
+    def __init__(self, config):
+        # Set variables
+        self.openai_api_key = config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY]
+        self.openai_api_endpoint = config[OPENAI_CONFIG_SECTION][ENDPOINT_CONFIG_KEY]
+        self.completion_deployment_name = config[OPENAI_CONFIG_SECTION][
+            COMPLETION_DEPLOYMENT_NAME_CONFIG_KEY
+        ]
+        self.embedding_deployment_name = config[OPENAI_CONFIG_SECTION][
+            EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY
+        ]
+        self.search_api_key = config[COGNITIVE_SEARCH_CONFIG_SECTION][
+            API_KEY_CONFIG_KEY
+        ]
+        self.search_endpoint = config[COGNITIVE_SEARCH_CONFIG_SECTION][
+            ENDPOINT_CONFIG_KEY
+        ]
+        self.use_rag = config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY]
+        self.enable_logging = config[COPILOT_CONFIG_SECTION][ENABLE_LOGGING_CONFIG_KEY]
 
         # Create a new instance of the semantic kernel
         self.kernel = semantic_kernel.Kernel()

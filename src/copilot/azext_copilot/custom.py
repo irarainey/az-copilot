@@ -1,17 +1,15 @@
 import json
-from pathlib import Path
-from azext_copilot.configuration import read_config_file, update_configuration
-from azext_copilot.constants import CONFIG_FILENAME, CONFIG_PATH
+from azext_copilot.configuration import read_config, update_config
 from azext_copilot.copilot import copilot
 
 
 # This is the entry point for the AZ CLI extension to call the Copilot
-def call_openai(prompt):
+def call_copilot(prompt):
     copilot(prompt)
 
 
-# This is the entry point for the AZ CLI extension to set the configuration
-def set_configuration(
+# This is the entry point for the AZ CLI extension to set the config
+def set_config(
     openai_api_key,
     openai_endpoint,
     completion_deployment_name,
@@ -23,7 +21,7 @@ def set_configuration(
     use_rag,
     enable_logging,
 ):
-    update_configuration(
+    update_config(
         openai_api_key,
         openai_endpoint,
         completion_deployment_name,
@@ -37,6 +35,6 @@ def set_configuration(
     )
 
 
-def show_configuration():
-    config_file = Path.home() / CONFIG_PATH / CONFIG_FILENAME
-    print(json.dumps(read_config_file(config_file), indent=4))
+# This is the entry point for the AZ CLI extension to show the config
+def show_config():
+    print(json.dumps(read_config(), indent=4))
