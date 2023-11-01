@@ -31,7 +31,8 @@ def copilot(prompt):
         print(
             "Configuration was found with relevant values empty. "
             "Use 'az copilot config set' to set the config values. "
-            "Run 'az copilot config set --help' to see options."
+            "Run 'az copilot config set --help' to see options "
+            "or 'az copilot config show' to see current values."
         )
         return
 

@@ -5,7 +5,7 @@ description = "Azure CLI Copilot"
 authors = ["Ira Rainey <ira.rainey@microsoft.com>"]
 readme = "README.md"
 packages = [
-    { include = "azext_copilot", from = "src/copilot" },
+    { include = "azext_copilot", from = "src" },
 ]
 
 [tool.poetry.dependencies]
