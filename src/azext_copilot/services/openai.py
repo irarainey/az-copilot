@@ -9,10 +9,10 @@ from azext_copilot.constants import (
     ENABLE_LOGGING_CONFIG_KEY,
     ENDPOINT_CONFIG_KEY,
     OPENAI_CONFIG_SECTION,
-    SEARCH_INDEX_NAME,
-    SEARCH_RELEVANCE_THRESHOLD,
-    SEARCH_RESULT_COUNT,
-    SEARCH_VECTOR_SIZE,
+    SEARCH_INDEX_NAME_CONFIG_KEY,
+    SEARCH_RELEVANCE_THRESHOLD_CONFIG_KEY,
+    SEARCH_RESULT_COUNT_CONFIG_KEY,
+    SEARCH_VECTOR_SIZE_CONFIG_KEY,
     SYSTEM_MESSAGE,
     USE_RAG_CONFIG_KEY,
 )
@@ -42,6 +42,18 @@ class OpenAIService:
         ]
         self.search_endpoint = config[COGNITIVE_SEARCH_CONFIG_SECTION][
             ENDPOINT_CONFIG_KEY
+        ]
+        self.search_vector_size = config[COGNITIVE_SEARCH_CONFIG_SECTION][
+            SEARCH_VECTOR_SIZE_CONFIG_KEY
+        ]
+        self.search_index = config[COGNITIVE_SEARCH_CONFIG_SECTION][
+            SEARCH_INDEX_NAME_CONFIG_KEY
+        ]
+        self.search_result_count = config[COGNITIVE_SEARCH_CONFIG_SECTION][
+            SEARCH_RESULT_COUNT_CONFIG_KEY
+        ]
+        self.search_relevance_threshold = config[COGNITIVE_SEARCH_CONFIG_SECTION][
+            SEARCH_RELEVANCE_THRESHOLD_CONFIG_KEY
         ]
         self.use_rag = config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY]
         self.enable_logging = config[COPILOT_CONFIG_SECTION][ENABLE_LOGGING_CONFIG_KEY]
@@ -73,7 +85,7 @@ class OpenAIService:
             # Register Cognitive Search as a memory store
             self.kernel.register_memory_store(
                 memory_store=AzureCognitiveSearchMemoryStore(
-                    SEARCH_VECTOR_SIZE,
+                    self.search_vector_size,
                     self.search_endpoint,
                     self.search_api_key,
                 )
@@ -132,10 +144,10 @@ class OpenAIService:
         if self.use_rag:
             # Search the memory store for any relevant documentation
             search_results = await context.memory.search_async(
-                collection=SEARCH_INDEX_NAME,
+                collection=self.search_index,
                 query=prompt,
-                limit=SEARCH_RESULT_COUNT,
-                min_relevance_score=SEARCH_RELEVANCE_THRESHOLD,
+                limit=self.search_result_count,
+                min_relevance_score=self.search_relevance_threshold,
             )
 
             # Build the result of the search

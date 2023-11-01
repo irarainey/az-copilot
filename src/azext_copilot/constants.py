@@ -3,23 +3,14 @@ COMMAND_KEY = "COMMAND"
 PROBLEM_KEY = "PROBLEM"
 EXPLANATION_KEY = "EXPLANATION"
 
+# The scope for the Azure CLI token
+AZURE_TOKEN_SCOPE = "https://management.azure.com/.default"
+
 # The configuration file path
 CONFIG_PATH = ".az-copilot"
 
 # The configuration file name
 CONFIG_FILENAME = "config.json"
-
-# The Coginitive Search index name
-SEARCH_INDEX_NAME = "az-cli-docs"
-
-# The Cognitive Search vector size
-SEARCH_VECTOR_SIZE = 1536
-
-# The Cognitive Search result count
-SEARCH_RESULT_COUNT = 3
-
-# The Cognitive Search relevance threshold
-SEARCH_RELEVANCE_THRESHOLD = 0.8
 
 # The Azure CLI documentation URL on GitHub
 CLI_DOCUMENTATION_URL = "https://github.com/MicrosoftDocs/azure-docs-cli/tree/main/latest/docs-ref-autogen"  # noqa: E501
@@ -43,6 +34,10 @@ API_KEY_CONFIG_KEY = "ApiKey"
 ENDPOINT_CONFIG_KEY = "Endpoint"
 COMPLETION_DEPLOYMENT_NAME_CONFIG_KEY = "CompletionDeploymentName"
 EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY = "EmbeddingDeploymentName"
+SEARCH_INDEX_NAME_CONFIG_KEY = "SearchIndexName"
+SEARCH_VECTOR_SIZE_CONFIG_KEY = "SearchVectorSize"
+SEARCH_RESULT_COUNT_CONFIG_KEY = "SearchResultCount"
+SEARCH_RELEVANCE_THRESHOLD_CONFIG_KEY = "SearchRelevanceThreshold"
 AUTO_RUN_CONFIG_KEY = "AutoRun"
 SHOW_COMMAND_CONFIG_KEY = "ShowCommand"
 USE_RAG_CONFIG_KEY = "UseRAG"
@@ -59,6 +54,10 @@ DEFAULT_CONFIG = {
     f"{COGNITIVE_SEARCH_CONFIG_SECTION}": {
         f"{API_KEY_CONFIG_KEY}": None,
         f"{ENDPOINT_CONFIG_KEY}": None,
+        f"{SEARCH_INDEX_NAME_CONFIG_KEY}": "az-cli-docs",
+        f"{SEARCH_VECTOR_SIZE_CONFIG_KEY}": 1536,
+        f"{SEARCH_RESULT_COUNT_CONFIG_KEY}": 3,
+        f"{SEARCH_RELEVANCE_THRESHOLD_CONFIG_KEY}": 0.8,
     },
     f"{COPILOT_CONFIG_SECTION}": {
         f"{AUTO_RUN_CONFIG_KEY}": False,

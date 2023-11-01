@@ -14,6 +14,10 @@ from azext_copilot.constants import (
     ENABLE_LOGGING_CONFIG_KEY,
     ENDPOINT_CONFIG_KEY,
     OPENAI_CONFIG_SECTION,
+    SEARCH_INDEX_NAME_CONFIG_KEY,
+    SEARCH_RELEVANCE_THRESHOLD_CONFIG_KEY,
+    SEARCH_RESULT_COUNT_CONFIG_KEY,
+    SEARCH_VECTOR_SIZE_CONFIG_KEY,
     SHOW_COMMAND_CONFIG_KEY,
     USE_RAG_CONFIG_KEY,
 )
@@ -77,6 +81,10 @@ def update_config(
     embedding_deployment_name,
     search_api_key,
     search_endpoint,
+    search_index,
+    search_vector_size,
+    search_result_count,
+    search_relevance_threshold,
     autorun,
     show_command,
     use_rag,
@@ -108,6 +116,26 @@ def update_config(
     if search_endpoint is not None:
         config[COGNITIVE_SEARCH_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] = search_endpoint
 
+    if search_index is not None:
+        config[COGNITIVE_SEARCH_CONFIG_SECTION][
+            SEARCH_INDEX_NAME_CONFIG_KEY
+        ] = search_index
+
+    if search_vector_size is not None:
+        config[COGNITIVE_SEARCH_CONFIG_SECTION][
+            SEARCH_VECTOR_SIZE_CONFIG_KEY
+        ] = search_vector_size
+
+    if search_result_count is not None:
+        config[COGNITIVE_SEARCH_CONFIG_SECTION][
+            SEARCH_RESULT_COUNT_CONFIG_KEY
+        ] = search_result_count
+
+    if search_relevance_threshold is not None:
+        config[COGNITIVE_SEARCH_CONFIG_SECTION][
+            SEARCH_RELEVANCE_THRESHOLD_CONFIG_KEY
+        ] = search_relevance_threshold
+
     if autorun is not None:
         config[COPILOT_CONFIG_SECTION][AUTO_RUN_CONFIG_KEY] = (
             autorun == "True" or autorun == "true" or autorun is True
@@ -135,54 +163,110 @@ def update_config(
 
 
 def check_config(config):
-    return not (
-        (
-            config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY] is None
-            or config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY] == ""
-        )
-        or (
-            config[OPENAI_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] is None
-            or config[OPENAI_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] == ""
-        )
-        or (
-            config[OPENAI_CONFIG_SECTION][COMPLETION_DEPLOYMENT_NAME_CONFIG_KEY] is None
-            or config[OPENAI_CONFIG_SECTION][COMPLETION_DEPLOYMENT_NAME_CONFIG_KEY]
-            == ""
-        )
-        or (
-            (
+    # Check if the OpenAI API key is set
+    if (
+        config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY] is None
+        or config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY] == ""
+    ):
+        return "OpenAI API key"
+
+    # Check if the OpenAI endpoint is set
+    if (
+        config[OPENAI_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] is None
+        or config[OPENAI_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] == ""
+    ):
+        return "OpenAI Endpoint"
+
+    # Check if the completion deployment name is set
+    if (
+        config[OPENAI_CONFIG_SECTION][COMPLETION_DEPLOYMENT_NAME_CONFIG_KEY] is None
+        or config[OPENAI_CONFIG_SECTION][COMPLETION_DEPLOYMENT_NAME_CONFIG_KEY] == ""
+    ):
+        return "Completion Deployment Name"
+
+    # Check if the auto run is set
+    if config[COPILOT_CONFIG_SECTION][AUTO_RUN_CONFIG_KEY] is None:
+        return "Auto Run"
+
+    # Check if the show command is set
+    if config[COPILOT_CONFIG_SECTION][SHOW_COMMAND_CONFIG_KEY] is None:
+        return "Show Command"
+
+    # Check if the enable logging is set
+    if config[COPILOT_CONFIG_SECTION][ENABLE_LOGGING_CONFIG_KEY] is None:
+        return "Enable Logging"
+
+    # Check if the RAG is set
+    if config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is None:
+        return "Use RAG"
+    else:
+        # Check if RAG is enabled
+        if config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is True:
+            # Check if the embedding deployment name is set
+            if (
                 config[OPENAI_CONFIG_SECTION][EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY]
                 is None
                 or config[OPENAI_CONFIG_SECTION][EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY]
                 == ""
-            )
-            and (
-                config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is not None
-                and config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is True
-            )
-        )
-        or (
-            (
+            ):
+                return "Embedding Deployment Name"
+
+            # Check if the Cognitive Search API key is set
+            if (
                 config[COGNITIVE_SEARCH_CONFIG_SECTION][API_KEY_CONFIG_KEY] is None
                 or config[COGNITIVE_SEARCH_CONFIG_SECTION][API_KEY_CONFIG_KEY] == ""
-            )
-            and (
-                config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is not None
-                and config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is True
-            )
-        )
-        or (
-            (
+            ):
+                return "Cognitive Search API Key"
+
+            # Check if the Cognitive Search endpoint is set
+            if (
                 config[COGNITIVE_SEARCH_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] is None
                 or config[COGNITIVE_SEARCH_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] == ""
-            )
-            and (
-                config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is not None
-                and config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is True
-            )
-        )
-        or config[COPILOT_CONFIG_SECTION][AUTO_RUN_CONFIG_KEY] is None
-        or config[COPILOT_CONFIG_SECTION][SHOW_COMMAND_CONFIG_KEY] is None
-        or config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is None
-        or config[COPILOT_CONFIG_SECTION][ENABLE_LOGGING_CONFIG_KEY] is None
-    )
+            ):
+                return "Cognitive Search Endpoint"
+
+            # Check if the Cognitive Search index name is set
+            if (
+                config[COGNITIVE_SEARCH_CONFIG_SECTION][SEARCH_INDEX_NAME_CONFIG_KEY]
+                is None
+                or config[COGNITIVE_SEARCH_CONFIG_SECTION][SEARCH_INDEX_NAME_CONFIG_KEY]
+                == ""
+            ):
+                return "Cognitive Search Index Name"
+
+            # Check if the Cognitive Search vector size is set
+            if (
+                config[COGNITIVE_SEARCH_CONFIG_SECTION][SEARCH_VECTOR_SIZE_CONFIG_KEY]
+                is None
+                or config[COGNITIVE_SEARCH_CONFIG_SECTION][
+                    SEARCH_VECTOR_SIZE_CONFIG_KEY
+                ]
+                == ""
+            ):
+                return "Cognitive Search Vector Size"
+
+            # Check if the Cognitive Search result count is set
+            if (
+                config[COGNITIVE_SEARCH_CONFIG_SECTION][SEARCH_RESULT_COUNT_CONFIG_KEY]
+                is None
+                or config[COGNITIVE_SEARCH_CONFIG_SECTION][
+                    SEARCH_RESULT_COUNT_CONFIG_KEY
+                ]
+                == ""
+            ):
+                return "Cognitive Search Result Count"
+
+            # Check if the Cognitive Search relevance threshold is set
+            if (
+                config[COGNITIVE_SEARCH_CONFIG_SECTION][
+                    SEARCH_RELEVANCE_THRESHOLD_CONFIG_KEY
+                ]
+                is None
+                or config[COGNITIVE_SEARCH_CONFIG_SECTION][
+                    SEARCH_RELEVANCE_THRESHOLD_CONFIG_KEY
+                ]
+                == ""
+            ):
+                return "Cognitive Search Relevance Threshold"
+
+    return ""

@@ -24,8 +24,8 @@ from azext_copilot.constants import (
     EXTRACTON_YML_FOLDER,
     OPENAI_CONFIG_SECTION,
     RAW_CLI_DOCUMENTATION_URL,
-    SEARCH_INDEX_NAME,
-    SEARCH_VECTOR_SIZE,
+    SEARCH_INDEX_NAME_CONFIG_KEY,
+    SEARCH_VECTOR_SIZE_CONFIG_KEY,
 )
 
 
@@ -135,11 +135,13 @@ async def index():
     config = read_config()
 
     # Determine if configuration has been set
-    if not check_config(config):
+    check_state = check_config(config)
+    if check_state != "":
         print(
-            "Configuration was found with empty values. "
-            "Use 'az copilot config set' to set the config values. "
-            "Run 'az copilot config set --help' to see options."
+            f"Configuration was found with empty values. [{check_state}]."
+            "\nUse 'az copilot config set' to set the config values. "
+            "Run 'az copilot config set --help' to see options "
+            "or 'az copilot config show' to see current values."
         )
         return
 
@@ -151,6 +153,10 @@ async def index():
     ]
     search_api_key = config[COGNITIVE_SEARCH_CONFIG_SECTION][API_KEY_CONFIG_KEY]
     search_endpoint = config[COGNITIVE_SEARCH_CONFIG_SECTION][ENDPOINT_CONFIG_KEY]
+    search_index = config[COGNITIVE_SEARCH_CONFIG_SECTION][SEARCH_INDEX_NAME_CONFIG_KEY]
+    search_vector_size = config[COGNITIVE_SEARCH_CONFIG_SECTION][
+        SEARCH_VECTOR_SIZE_CONFIG_KEY
+    ]
 
     kernel = Kernel()
 
@@ -165,7 +171,7 @@ async def index():
 
     kernel.register_memory_store(
         memory_store=AzureCognitiveSearchMemoryStore(
-            SEARCH_VECTOR_SIZE, search_endpoint, search_api_key, SEARCH_INDEX_NAME
+            search_vector_size, search_endpoint, search_api_key, search_index
         )
     )
 
@@ -186,7 +192,7 @@ async def index():
             print(f"=> Indexing '{file_path.name}'")
 
             await kernel.memory.save_information_async(
-                SEARCH_INDEX_NAME,
+                search_index,
                 id=str(counter).zfill(4),
                 text=content,
                 description=description,

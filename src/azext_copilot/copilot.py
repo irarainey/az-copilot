@@ -27,10 +27,11 @@ def copilot(prompt):
     config = read_config()
 
     # Determine if configuration has been set
-    if not check_config(config):
+    check_state = check_config(config)
+    if check_state != "":
         print(
-            "Configuration was found with relevant values empty. "
-            "Use 'az copilot config set' to set the config values. "
+            f"Configuration was found with empty values. [{check_state}]."
+            "\nUse 'az copilot config set' to set the config values. "
             "Run 'az copilot config set --help' to see options "
             "or 'az copilot config show' to see current values."
         )

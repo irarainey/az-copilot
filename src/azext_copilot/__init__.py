@@ -82,6 +82,34 @@ class CopilotCommandsLoader(AzCommandsLoader):
                 help="The Azure Cognitive Search endpoint.",
                 required=False,
             )
+            # Define the Cognitive Search index name argument
+            c.argument(
+                "search_index",
+                options_list=["--search-index-name", "-si"],
+                help="The Azure Cognitive Search index name.",
+                required=False,
+            )
+            # Define the Cognitive Search vector size argument
+            c.argument(
+                "search_vector_size",
+                options_list=["--search-vector-size", "-sv"],
+                help="The Azure Cognitive Search vector size.",
+                required=False,
+            )
+            # Define the Cognitive Search result count argument
+            c.argument(
+                "search_result_count",
+                options_list=["--search-result-count", "-sc"],
+                help="The Azure Cognitive Search result count.",
+                required=False,
+            )
+            # Define the Cognitive Search relevance threshold argument
+            c.argument(
+                "search_relevance_threshold",
+                options_list=["--search-relevance-threshold", "-st"],
+                help="The Azure Cognitive Search relevance threshold.",
+                required=False,
+            )
             # Define the autorun argument
             c.argument(
                 "autorun",
