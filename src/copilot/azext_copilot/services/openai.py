@@ -59,24 +59,25 @@ class OpenAIService:
             ),
         )
 
-        # Register the text embedding generation service with the kernel
-        self.kernel.add_text_embedding_generation_service(
-            "text-embedding-ada-002",
-            AzureTextEmbedding(
-                deployment_name=self.embedding_deployment_name,
-                endpoint=self.openai_api_endpoint,
-                api_key=self.openai_api_key,
-            ),
-        )
-
-        # Register Cognitive Search as a memory store
-        self.kernel.register_memory_store(
-            memory_store=AzureCognitiveSearchMemoryStore(
-                SEARCH_VECTOR_SIZE,
-                self.search_endpoint,
-                self.search_api_key,
+        if self.use_rag:
+            # Register the text embedding generation service with the kernel
+            self.kernel.add_text_embedding_generation_service(
+                "text-embedding-ada-002",
+                AzureTextEmbedding(
+                    deployment_name=self.embedding_deployment_name,
+                    endpoint=self.openai_api_endpoint,
+                    api_key=self.openai_api_key,
+                ),
             )
-        )
+
+            # Register Cognitive Search as a memory store
+            self.kernel.register_memory_store(
+                memory_store=AzureCognitiveSearchMemoryStore(
+                    SEARCH_VECTOR_SIZE,
+                    self.search_endpoint,
+                    self.search_api_key,
+                )
+            )
 
     def send_prompt(self, input, history=None):
         return asyncio.run(self.send(input, history))
@@ -142,7 +143,7 @@ class OpenAIService:
                 documentation += f"\n{result.description}\n{result.text}\n"
 
             if self.enable_logging:
-                print(f"[OPENAI|SEND PROMPT] Search Result: {documentation}")
+                print(f"[OPENAI|SEND PROMPT] RAG Search Result: {documentation}")
 
         # Define the context variables
         context["az_documentation"] = documentation

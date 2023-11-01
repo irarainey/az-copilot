@@ -118,12 +118,51 @@ def update_config(
 
 def check_config(config):
     return not (
-        config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY] is None
-        or config[OPENAI_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] is None
-        or config[OPENAI_CONFIG_SECTION][COMPLETION_DEPLOYMENT_NAME_CONFIG_KEY] is None
-        or config[OPENAI_CONFIG_SECTION][EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY] is None
-        or config[COGNITIVE_SEARCH_CONFIG_SECTION][API_KEY_CONFIG_KEY] is None
-        or config[COGNITIVE_SEARCH_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] is None
+        (
+            config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY] is None
+            or config[OPENAI_CONFIG_SECTION][API_KEY_CONFIG_KEY] == ""
+        )
+        or (
+            config[OPENAI_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] is None
+            or config[OPENAI_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] == ""
+        )
+        or (
+            config[OPENAI_CONFIG_SECTION][COMPLETION_DEPLOYMENT_NAME_CONFIG_KEY] is None
+            or config[OPENAI_CONFIG_SECTION][COMPLETION_DEPLOYMENT_NAME_CONFIG_KEY]
+            == ""
+        )
+        or (
+            (
+                config[OPENAI_CONFIG_SECTION][EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY]
+                is None
+                or config[OPENAI_CONFIG_SECTION][EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY]
+                == ""
+            )
+            and (
+                config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is not None
+                and config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is True
+            )
+        )
+        or (
+            (
+                config[COGNITIVE_SEARCH_CONFIG_SECTION][API_KEY_CONFIG_KEY] is None
+                or config[COGNITIVE_SEARCH_CONFIG_SECTION][API_KEY_CONFIG_KEY] == ""
+            )
+            and (
+                config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is not None
+                and config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is True
+            )
+        )
+        or (
+            (
+                config[COGNITIVE_SEARCH_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] is None
+                or config[COGNITIVE_SEARCH_CONFIG_SECTION][ENDPOINT_CONFIG_KEY] == ""
+            )
+            and (
+                config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is not None
+                and config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is True
+            )
+        )
         or config[COPILOT_CONFIG_SECTION][AUTO_RUN_CONFIG_KEY] is None
         or config[COPILOT_CONFIG_SECTION][SHOW_COMMAND_CONFIG_KEY] is None
         or config[COPILOT_CONFIG_SECTION][USE_RAG_CONFIG_KEY] is None
