@@ -59,6 +59,8 @@ class ConversationEngine:
 
         if PROBLEM_KEY in response:
             self._problems = response[PROBLEM_KEY]
+        elif self._commands is None or self._commands.strip() == "":
+            self._problems = "No command could be found."
         else:
             self._problems = None
 
