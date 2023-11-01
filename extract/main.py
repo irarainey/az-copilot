@@ -21,7 +21,6 @@ from azext_copilot.constants import (
     EMBEDDING_DEPLOYMENT_NAME_CONFIG_KEY,
     ENDPOINT_CONFIG_KEY,
     EXTRACTON_DOCS_FOLDER,
-    EXTRACTON_YML_FOLDER,
     OPENAI_CONFIG_SECTION,
     RAW_CLI_DOCUMENTATION_URL,
     SEARCH_INDEX_NAME_CONFIG_KEY,
@@ -41,9 +40,9 @@ def soup_to_dict(element):
         return element.string
 
 
-def extract_documentation_to_files():
+def extract_documentation_to_files(url):
     # Get the root page of the documentation
-    response = requests.get(CLI_DOCUMENTATION_URL)
+    response = requests.get(url)
     content = response.content
     soup = BeautifulSoup(content, features="html.parser")
 
@@ -56,80 +55,83 @@ def extract_documentation_to_files():
     items = json_contents["payload"]["tree"]["items"]
 
     for item in items:
-        if item["contentType"] == "file" and item["path"].endswith("/TOC.yml") is False:
+        if item["contentType"] == "directory":
+            directory = f'{CLI_DOCUMENTATION_URL}/{item["path"].replace("latest/docs-ref-autogen", "")}'  # noqa: E501
+            extract_documentation_to_files(directory)
+        elif (
+            item["contentType"] == "file" and item["path"].endswith("/TOC.yml") is False
+        ):
             file = f'{RAW_CLI_DOCUMENTATION_URL}/{item["path"]}'
             response = requests.get(file)
             content = response.content.decode("utf-8")
             print(f"Found '{file}'")
-            parts = item["path"].split("/")
-            y = open(f"{EXTRACTON_YML_FOLDER}/{parts[-1]}", "w")
-            y.write(content)
-            y.close()
 
-            parsed_content = yaml.safe_load(content)
+            try:
+                parsed_content = yaml.safe_load(content)
+                if "directCommands" in parsed_content:
+                    for command in parsed_content["directCommands"]:
+                        print(f'=> Parsing \'{command["uid"]}\'')
+                        copy = f'Command: {command["name"]}'
+                        copy += f'\nDescription: {command["summary"]} {command["description"] + "" if "description" in command else ""}'  # noqa: E501
+                        copy += f'\nType: {command["sourceType"]}'
 
-            if "directCommands" in parsed_content:
-                for command in parsed_content["directCommands"]:
-                    print(f'=> Parsing \'{command["uid"]}\'')
-                    copy = f'Command: {command["name"]}'
-                    copy += f'\nDescription: {command["summary"]} {command["description"] + "" if "description" in command else ""}'  # noqa: E501
-                    copy += f'\nType: {command["sourceType"]}'
+                        if "extensionSuffix" in command:
+                            copy += f'\nType: {command["extensionSuffix"]}'
 
-                    if "extensionSuffix" in command:
-                        copy += f'\nType: {command["extensionSuffix"]}'
+                        copy += f'\nSyntax:\n\t{command["syntax"]}'
 
-                    copy += f'\nSyntax:\n\t{command["syntax"]}'
-
-                    if "examples" in command:
-                        copy += "\nExamples:"
-                        for example in command["examples"]:
-                            cleaned_syntax = example["syntax"].replace("\n", "\n\t\t")
-                            copy += f'\n\t{example["summary"]}:\n\t\t{cleaned_syntax}'
-
-                    if "requiredParameters" in command:
-                        copy += "\nRequired Parameters:"
-                        for req_param in command["requiredParameters"]:
-                            copy += f'\n\t{req_param["name"]}'
-                            copy += f'\n\t\t{req_param["summary"]}'
-
-                    if "optionalParameters" in command:
-                        copy += "\nOptional Parameters:"
-                        for opt_param in command["optionalParameters"]:
-                            copy += f'\n\t{opt_param["name"]}'
-
-                            if "summary" in opt_param:
-                                copy += f'\n\t\t{opt_param["summary"]}'
-
-                            if "defaultValue" in opt_param:
+                        if "examples" in command:
+                            copy += "\nExamples:"
+                            for example in command["examples"]:
+                                cleaned_syntax = example["syntax"].replace(
+                                    "\n", "\n\t\t"
+                                )
                                 copy += (
-                                    f'\n\t\tDefault Value: {opt_param["defaultValue"]}'
+                                    f'\n\t{example["summary"]}:\n\t\t{cleaned_syntax}'
                                 )
 
-                            if "parameterValueGroup" in opt_param:
-                                copy += f'\n\t\tAccepted Values: {opt_param["parameterValueGroup"]}'  # noqa: E501
+                        if "requiredParameters" in command:
+                            copy += "\nRequired Parameters:"
+                            for req_param in command["requiredParameters"]:
+                                copy += f'\n\t{req_param["name"]}'
+                                copy += f'\n\t\t{req_param["summary"]}'
 
-                    filename = (
-                        command["uid"]
-                        .replace("(", "_")
-                        .replace(")", "_")
-                        .replace("-", "_")
-                    )
-                    f = open(f"{EXTRACTON_DOCS_FOLDER}/{filename}.txt", "w")
-                    f.write(copy)
-                    f.close()
+                        if "optionalParameters" in command:
+                            copy += "\nOptional Parameters:"
+                            for opt_param in command["optionalParameters"]:
+                                copy += f'\n\t{opt_param["name"]}'
+
+                                if "summary" in opt_param:
+                                    copy += f'\n\t\t{opt_param["summary"]}'
+
+                                if "defaultValue" in opt_param:
+                                    copy += f'\n\t\tDefault Value: {opt_param["defaultValue"]}'  # noqa: E501
+
+                                if "parameterValueGroup" in opt_param:
+                                    copy += f'\n\t\tAccepted Values: {opt_param["parameterValueGroup"]}'  # noqa: E501
+
+                        filename = (
+                            command["uid"]
+                            .replace("(", "_")
+                            .replace(")", "_")
+                            .replace("-", "_")
+                        )
+                        f = open(f"{EXTRACTON_DOCS_FOLDER}/{filename}.txt", "w")
+                        f.write(copy)
+                        f.close()
+
+            except yaml.YAMLError as exc:
+                print(f"Error parsing '{file}': {exc}")
+                continue
 
 
 async def index():
     docs_path_exists = os.path.exists(EXTRACTON_DOCS_FOLDER)
-    yml_path_exists = os.path.exists(EXTRACTON_YML_FOLDER)
 
     if not docs_path_exists:
         os.makedirs(EXTRACTON_DOCS_FOLDER)
 
-    if not yml_path_exists:
-        os.makedirs(EXTRACTON_YML_FOLDER)
-
-    extract_documentation_to_files()
+    extract_documentation_to_files(CLI_DOCUMENTATION_URL)
 
     # Get configuration values
     config = read_config()
@@ -193,7 +195,7 @@ async def index():
 
             await kernel.memory.save_information_async(
                 search_index,
-                id=str(counter).zfill(4),
+                id=str(counter).zfill(6),
                 text=content,
                 description=description,
                 additional_metadata=now,

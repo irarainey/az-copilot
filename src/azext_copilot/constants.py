@@ -23,9 +23,6 @@ RAW_CLI_DOCUMENTATION_URL = (
 # The directory where the extracted documentation is stored
 EXTRACTON_DOCS_FOLDER = "extract/docs"
 
-# The directory where the extracted YAML files are stored
-EXTRACTON_YML_FOLDER = "extract/yml"
-
 # Define the configuration keys
 OPENAI_CONFIG_SECTION = "AzureOpenAI"
 COGNITIVE_SEARCH_CONFIG_SECTION = "AzureCognitiveSearch"
