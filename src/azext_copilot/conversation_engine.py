@@ -1,5 +1,6 @@
 import ast
 import json
+import re
 from azext_copilot.constants import (
     COMMAND_KEY,
     COPILOT_CONFIG_SECTION,
@@ -16,7 +17,7 @@ class ConversationEngine:
         self._problems = None
 
         # Setup services
-        self.openai_client_service = openai_service
+        self.openai_service = openai_service
         self.enable_logging = config[COPILOT_CONFIG_SECTION][ENABLE_LOGGING_CONFIG_KEY]
 
     def send_prompt(self, prompt):
@@ -26,15 +27,32 @@ class ConversationEngine:
         history = [x[1] for x in self.chat_history]
 
         # get openAI response
-        response = self.openai_client_service.send_prompt(prompt, history)
+        openai_response = self.openai_service.send_prompt(prompt, history)
 
-        r = ast.literal_eval(response.result)
-        response = json.loads(json.dumps(r))
+        if openai_response.error_occurred:
+            if self.enable_logging:
+                print(
+                    "[CONVERSATION ENGINE|SEND PROMPT] Error Response: "
+                    f"{openai_response.last_error_description}"
+                )
+            matches = re.findall(
+                r"\(<(.*?)>, '(.*?)', (.*?)\)", openai_response.last_error_description
+            )
+            if matches:
+                error_code, error_message, _ = matches[0]
+                print(f"An error has occured. {error_message} ({error_code}).")
+            else:
+                print(openai_response.last_error_description)
+            exit(0)
 
         if self.enable_logging:
             print(
-                f"[CONVERSATION ENGINE|SEND PROMPT] Conversation Response: {response}"
+                "[CONVERSATION ENGINE|SEND PROMPT] Conversation Response: "
+                f"{openai_response.result}"
             )
+
+        json_response = ast.literal_eval(openai_response.result)
+        response = json.loads(json.dumps(json_response))
 
         if COMMAND_KEY in response:
             self._commands = response[COMMAND_KEY]
