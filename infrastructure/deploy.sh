@@ -5,9 +5,11 @@ set -euo pipefail
 CURRENT_SUBSCRIPTION_ID=$(az account show --query "id" -o tsv)
 TIMESTAMP_SALT=$(date '+%s')
 UNIQUE_SUFFIX=$(echo "$CURRENT_SUBSCRIPTION_ID$TIMESTAMP_SALT" | shasum | cut -c 1-12)
+
+# Edit this to change the name of the resources deployed
 NAME="az-cp-$UNIQUE_SUFFIX"
 
-# Set the location for the resources
+# Edit this to set the location for the resources
 LOCATION="uksouth"
 
 # Run the Bicep deployment
