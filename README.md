@@ -85,10 +85,10 @@ When deploying Azure OpenAI services, ensure you have enough quota available in 
 
 The Copilot extension is available as a Python wheel file and can be installed using the `az extension add` command directly from the [releases page](https://github.com/irarainey/az-copilot/releases)
 
-To install the latest version of the extension, run the following command:
+To install the extension, check out the releases page, determine the version number of the latest release and run the following command specifying the version number in the filename:
 
 ```bash
-az extension add --source https://github.com/irarainey/az-copilot/releases/download/latest/copilot.whl --yes
+az extension add --source az extension add --source https://github.com/irarainey/az-copilot/releases/download/latest/copilot-0.1.15-py3-none-any.whl --yes
 ```
 
 You can check the version of the extension you have installed by running the following command:

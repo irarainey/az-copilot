@@ -24,11 +24,6 @@ install: ## 🤖 Install dependencies
 build: ## 🤖 Build the project
 	@figlet $@ || true
 	@poetry build --format wheel
-	@project_name=copilot-$$(poetry version -s)-py3-none-any.whl; \
-		whl_file=$$(ls dist/$$project_name); \
-		new_name="dist/copilot.whl"; \
-		mv "$$whl_file" "$$new_name"; \
-		echo "Renamed $$whl_file to $$new_name"
 
 deploy: ## 🤖 Deploy the project locally
 	@figlet $@ || true
