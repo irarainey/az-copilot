@@ -4,7 +4,7 @@ This project is an experimental extension for the Azure CLI that allows you to u
 
 The Azure CLI documentation is used to create embeddings for each Azure CLI command. These embeddings are then stored in Azure Cognitive Search and used to determine the most up to date syntax for the command you wish to execute.
 
-![List Resource Groups](https://raw.githubusercontent.com/irarainey/az-copilot/main/resources/images/list_resource_group.png)
+![List Resource Groups](https://raw.githubusercontent.com/irarainey/az-copilot/main/images/list_resource_groups.png)
 
 ## Deployment Steps
 
