@@ -88,7 +88,7 @@ The Copilot extension is available as a Python wheel file and can be installed u
 To install the extension, check out the releases page, determine the version number of the latest release and run the following command specifying the version number in the filename:
 
 ```bash
-az extension add --source az extension add --source https://github.com/irarainey/az-copilot/releases/download/latest/copilot-0.1.15-py3-none-any.whl --yes
+az extension add --source https://github.com/irarainey/az-copilot/releases/download/latest/copilot-0.1.15-py3-none-any.whl --yes
 ```
 
 You can check the version of the extension you have installed by running the following command:
