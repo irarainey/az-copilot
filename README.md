@@ -144,7 +144,7 @@ For security API keys are not displayed in the output.
 
 ## Generate Embeddings
 
-Once the Azure OpenAI and Azure Cognitive Services resources have been deployed, and the Copilot extension has been installed, you can generate the embeddings required for RAG.
+Once the Azure OpenAI and Azure Cognitive Services resources have been deployed, the Copilot extension has been installed, and the configuration values have been set, you can generate the embeddings required for RAG.
 
 To generate the embeddings, you can use the `main.py` script in the `extract` directory. To make it simpler, a `makefile` has been provided to run the extraction script. From a `bash` terminal, run the following command:
 
@@ -152,6 +152,6 @@ To generate the embeddings, you can use the `main.py` script in the `extract` di
 make extract-docs
 ```
 
-This script will extract the latest version of the Azure CLI documentation directly from the GitHub repository in YAML format, parse it, and create the embeddings required for RAG. A single text document is created for each command, which includes syntax and example, and is then used to create the embeddings, and stored in Azure Cognitive Search.
+This script will extract the latest version of the Azure CLI documentation directly from the GitHub repository in YAML format, parse it, and create the embeddings required for RAG. A single text document is created locally in the `extract/docs` directory for each command, which includes syntax and example, and is then used to create the embeddings, and stored in Azure Cognitive Search.
 
 At the time of writing there are just over 11,000 Azure CLI commands. Depending upon the speed of your connection, this process will take around an hour to complete. The script will output the progress to the terminal.
