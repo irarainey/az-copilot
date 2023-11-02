@@ -16,7 +16,7 @@ The Azure CLI command will then be presented to you and you can choose to run it
 
 ![List Resource Groups](https://raw.githubusercontent.com/irarainey/az-copilot/main/images/list_resource_groups.png)
 
-If the Copilot deteremines that more information is required, such as missing parameters, it will prompt you for the additional information.
+If the Copilot deteremines that more information is required, such as missing parameters, it will prompt you for the additional information. At any time you can drop out of the converation by typing `quit` or `q`.
 
 ![Create Resource Groups](https://raw.githubusercontent.com/irarainey/az-copilot/main/images/create_without_params.png)
 
