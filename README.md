@@ -12,7 +12,7 @@ This project is built using Microsoft Semantic Kernel SDK, which allows for easy
 
 To use the Copilot simply use the command `az copilot --prompt "your command prompt here"`. This will invoke the call to determine the most likely Azure CLI command to run based on the prompt you provide.
 
-The Azure CLI command will then be presented to you and you can choose to run it or not.
+The Azure CLI command will then be presented to you and you can choose to run it or not. If `autorun` is not enabled, you will need to confirm execution by pressing `y` or `return`.
 
 ![List Resource Groups](https://raw.githubusercontent.com/irarainey/az-copilot/main/images/list_resource_groups.png)
 

@@ -64,9 +64,10 @@ def copilot(prompt):
 
     # Run the feedback loop
     while not engine.is_finished():
-        print("\nI need more information:")
+        print("\nSorry, I need some more information:")
         print(f"\nCommand: {response[COMMAND_KEY]}")
-        print(f"Explanation: {response[EXPLANATION_KEY]}")
+        if response[EXPLANATION_KEY] != "":
+            print(f"Explanation: {response[EXPLANATION_KEY]}")
         print(f"Problem: {response[PROBLEM_KEY]}")
         prompt = input(f"\n{response[PROBLEM_KEY].rstrip('.')}: ")
 

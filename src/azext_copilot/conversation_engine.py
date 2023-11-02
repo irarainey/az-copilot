@@ -56,13 +56,22 @@ class ConversationEngine:
 
         if COMMAND_KEY in response:
             self._commands = response[COMMAND_KEY]
+            if self._commands is None or self._commands.strip() == "":
+                self._commands = "UNKNOWN"
 
         if PROBLEM_KEY in response:
-            self._problems = response[PROBLEM_KEY]
-        elif self._commands is None or self._commands.strip() == "":
-            self._problems = "No command could be found."
+            if self._commands == "UNKNOWN":
+                self._problems = (
+                    "A command couldn't be determined from your input. "
+                    "Try rephrasing you prompt."
+                )
+            else:
+                self._problems = response[PROBLEM_KEY]
         else:
             self._problems = None
+
+        response[COMMAND_KEY] = self._commands
+        response[PROBLEM_KEY] = self._problems
 
         self.chat_history.append(("a", response))
         return response
