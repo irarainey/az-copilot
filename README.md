@@ -155,3 +155,7 @@ make extract-docs
 This script will extract the latest version of the Azure CLI documentation directly from the GitHub repository in YAML format, parse it, and create the embeddings required for RAG. A single text document is created locally in the `extract/docs` directory for each command, which includes syntax and example, and is then used to create the embeddings, and stored in Azure Cognitive Search.
 
 At the time of writing there are just over 11,000 Azure CLI commands. Depending upon the speed of your connection, this process will take around an hour to complete. The script will output the progress to the terminal.
+
+### With Thanks
+
+This extension is heavily based on an internal project created for the Microsoft Global Hackathon 2023 called Azure Maestro. A huge thanks to the entire team for their hard work that made this possible. The epic team members were: Marc van Duyn, Amin Espinoza, Arjen Kroezen, Hayward van Biljon, Jaya Kumar, Michael Collier, Nuno Silva, Sherryl Manalo, and myself.
