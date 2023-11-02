@@ -71,7 +71,7 @@ def copilot(prompt):
         prompt = input(f"\n{response[PROBLEM_KEY].rstrip('.')}: ")
 
         # Check if the user wants to quit
-        if prompt == "quit":
+        if prompt == "quit" or prompt == "q":
             print("Quitting Copilot conversation.")
             return
 
@@ -100,12 +100,12 @@ def copilot(prompt):
         print(f"\nCommand: {response[COMMAND_KEY]}")
         print(f"Explanation: {response[EXPLANATION_KEY]}")
         run_command = (
-            input("\nDo you want to execute this command? (y/n) ").lower().strip()
-            == "y"
+            input("\nDo you want to execute this command? (Y/n) ")
+            .lower()
+            .strip()
         )
-
         # If the user wants to execute the command, do so
-        if run_command:
+        if run_command == "y" or run_command == "":
             # Execute the command and show the output
             stdout, stderr, has_err = execute(response[COMMAND_KEY], enable_logging)
 
