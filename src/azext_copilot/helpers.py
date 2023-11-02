@@ -6,6 +6,8 @@ def execute(command, enable_logging):
     if enable_logging:
         print(f"[HELPERS|EXECUTE] Command: {command}")
 
+    print("Executing command...\n")
+
     process = subprocess.Popen(
         command,
         shell=True,
@@ -26,16 +28,13 @@ def execute(command, enable_logging):
     if stderr.startswith(
         "WARNING: Unable to prompt for confirmation as no tty available. Use --yes."
     ):
-        if enable_logging:
-            print("[HELPERS|EXECUTE] Command requires confirmation. Adding --yes.")
+        print("Command requires confirmation. Adding --yes and retrying.")
         has_err = False
         execute(f"{command} --yes", enable_logging)
 
     if stderr.startswith("WARNING: The command requires the extension"):
         has_err = False
-        print(
-            "This command requires an extension, which has been installed for you."
-        )
+        print("This command requires an extension, which has been installed for you.")
         execute(command, enable_logging)
 
     return stdout, stderr, has_err
