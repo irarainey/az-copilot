@@ -158,7 +158,7 @@ Additionally you can use the command `az copilot config show` to display the cur
 
 ![Configuration Options](https://raw.githubusercontent.com/irarainey/az-copilot/main/images/show_configuration.png)
 
-> **NOTE:** For security reasons no API keys are not displayed in the output.
+> **NOTE:** For security reasons API keys are not displayed in the output.
 
 ## Generate Embeddings
 
