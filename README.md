@@ -2,7 +2,7 @@
 
 > **WARNING:** *This extension is experimental and should not be used in a production environment. It is intended solely to demonstrate the capability of extending a CLI tool using OpenAI.*
 
-This project is an extension for the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/what-is-azure-cli) that allows you to use natural language prompts to run Azure CLI commands. It uses [Azure OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/overview) to determine the most likely Azure CLI command to run based on the plain English command you provide.
+This project is an extension for the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/what-is-azure-cli) that allows you to use natural language prompts to run Azure CLI commands. It uses [Azure OpenAI](https://learn.microsoft.com/en-us/azure/ai-services/openai/overview) to determine the most likely Azure CLI command to run based upon the prompt you provide.
 
 The latest [Azure CLI documentation](https://learn.microsoft.com/en-us/cli/azure/reference-index?view=azure-cli-latest) is used to create embeddings for each Azure CLI command. These embeddings are then stored in [Azure Cognitive Search](https://learn.microsoft.com/en-us/azure/search/search-what-is-azure-search) and used for [Retrieval Augmented Generation (RAG)](https://learn.microsoft.com/en-us/azure/search/retrieval-augmented-generation-overview) to determine the most up to date syntax for the command you wish to execute.
 
