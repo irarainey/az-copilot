@@ -21,6 +21,7 @@ class CopilotCommandsLoader(AzCommandsLoader):
             g.custom_command("copilot", "copilot_cmd")
             g.custom_command("copilot config set", "set_config_cmd")
             g.custom_command("copilot config show", "show_config_cmd")
+            g.custom_command("copilot version", "get_version_cmd")
 
         # Return the command table
         return self.command_table
