@@ -112,7 +112,7 @@ az extension add --source https://github.com/irarainey/az-copilot/releases/downl
 You can check the version of the extension you have installed by running the following command:
 
 ```bash
-az extension list --query "[?name == 'copilot'].version" -o tsv
+az copilot version
 ```
 
 To unstall the extension, simply run the extension `az extension remove` command:
