@@ -80,16 +80,6 @@ def extract_documentation_to_files(url):
 
                         copy += f'\nSyntax:\n\t{command["syntax"] + "" if "syntax" in command else ""}'  # noqa: E501
 
-                        if "examples" in command:
-                            copy += "\nExamples:"
-                            for example in command["examples"]:
-                                cleaned_syntax = example["syntax"].replace(
-                                    "\n", "\n\t\t"
-                                )
-                                copy += (
-                                    f'\n\t{example["summary"] + "" if "summary" in example else ""}:\n\t\t{cleaned_syntax}'  # noqa: E501
-                                )
-
                         if "requiredParameters" in command:
                             copy += "\nRequired Parameters:"
                             for req_param in command["requiredParameters"]:
