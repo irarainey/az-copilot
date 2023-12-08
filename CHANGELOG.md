@@ -2,6 +2,8 @@
 
 - Added `version` command to print version information
 - Added `--autorun` option to run a single command without prompting for confirmation when autorun is globally disabled
+- Amended default search relevance threshold to 0.85
+- Amended default search result limit to 7
 
 ## 0.1.15
 
