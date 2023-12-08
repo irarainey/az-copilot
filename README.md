@@ -47,14 +47,14 @@ Two additional configuration options are available for RAG. These are:
 
 These settings are given default values when the Copilot extension is installed. These are:
 
-- `--search-relevance-threshold = 0.5`
-- `--search-result-count = 5`
+- `--search-relevance-threshold 0.85`
+- `--search-result-count 7`
 
-If you wish to change these values, you can do so using the command `az copilot config set`. Special consideration should be given to the number of results returned, as the more results returned, the larger the resulting prompt being sent to the OpenAI service will be, which could then break the token limit.
+If you wish to change these values, you can do so using the command `az copilot config set`. Special consideration should be given to the number of results returned, as the more results returned, the larger the resulting prompt being sent to the OpenAI service will be, which could then break the token limit. Changing the relevance threshold change the accuracy of the results returned and hence the quality of the command generated.
 
 ### Command Flow Options
 
-The Copilot extension has several configuration options that can be used to control the flow of the command. These are:
+The Copilot extension has several global configuration options that can be used to control the flow of the command. These are:
 
 - `--autorun` - Automatically run the command when ready
 - `--show-command` - Show the Azure CLI command to be run
@@ -63,11 +63,11 @@ The Copilot extension has several configuration options that can be used to cont
 These are all boolean settings that can be set using the command `az copilot config set`.
 
 Default settings are:
-- `--autorun = false`
-- `--show-command = true`
-- `--enable-logging = false`.
+- `--autorun false`
+- `--show-command true`
+- `--enable-logging false`.
 
-If you are comfortable with the Copilot extension and want to speed up the flow, you can set `--autorun = true`. This will automatically run the command when ready.
+If you are comfortable with the Copilot extension and want to speed up the flow, you can set `--autorun true`. This will automatically run the command when ready.
 
 > **Note:** *Any command that requires a confirmation will also be automatically confirmed. This is to ensure the command flow is not interrupted, but can be dangerous if you are not sure what the command will do, or if it is destructive such as with a delete command.*
 
