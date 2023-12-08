@@ -4,7 +4,7 @@ from azext_copilot.version import get_version
 
 
 # This is the entry point for the AZ CLI extension to call the Copilot
-def copilot_cmd(prompt, autorun):
+def copilot_cmd(prompt, autorun=False):
     copilot(prompt, autorun)
 
 

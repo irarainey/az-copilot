@@ -43,7 +43,7 @@ class CopilotCommandsLoader(AzCommandsLoader):
                 "autorun",
                 options_list=["--autorun", "-a"],
                 help="Boolean value to autorun the individual command when ready.",
-                required=False,
+                required=False
             )
 
         # Create a new argument context for the copilot config set command
