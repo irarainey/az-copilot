@@ -20,7 +20,9 @@ To install and use the Copilot extension you will need the following:
 
 To use the Copilot simply use the command `az copilot --prompt "your command prompt here"`. This will invoke the call to determine the most likely Azure CLI command to run based on the prompt you provide.
 
-The Azure CLI command will then be presented to you and you can choose to run it or not by pressing `y` or `return` confirm execution. This confirmation step can be overridden by setting the configuration setting `autorun = true`.
+The Azure CLI command will then be presented to you and you can choose to run it or not by pressing `y` or `return` confirm execution. This confirmation step can be overridden by setting the global configuration setting `autorun = true`, or at a single command level adding the option `--autorun` or `-a` which will override the global setting, such as: `az copilot --prompt "list all my resource groups in a table" -a`.
+
+> **WARNING:** *Care should be taken with autorun functionality as any commands usually requiring confirmation, such as deletion of resources, will auto confirm the action being performed.*
 
 ![List Resource Groups](https://raw.githubusercontent.com/irarainey/az-copilot/main/images/list_resource_groups.png)
 
@@ -138,7 +140,7 @@ Command
     az copilot config set
 
 Arguments
-    --autorun -a                     : Boolean value to autorun the command when ready.
+    --autorun -a                     : Global boolean value to autorun the command when ready.
     --completion-name -cn            : The Azure OpenAI completion model deployment name.
     --embedding-name -en             : The Azure OpenAI embedding model deployment name.
     --enable-logging -l              : Boolean value to enable or disable logging.
