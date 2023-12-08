@@ -1,6 +1,6 @@
 from azext_copilot.configuration import show_config, update_config
 from azext_copilot.copilot import copilot
-from azext_copilot.version import get_version
+from azext_copilot.version import __version__
 
 
 # This is the entry point for the AZ CLI extension to call the Copilot
@@ -48,5 +48,6 @@ def show_config_cmd():
     print(show_config())
 
 
+# This is the entry point for the AZ CLI extension to show the version
 def get_version_cmd():
-    print(get_version())
+    print(f"copilot version {__version__}")
