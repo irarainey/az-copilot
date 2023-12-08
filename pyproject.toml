@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "copilot"
-version = "0.1.15"
+version = "0.1.16"
 description = "Azure CLI Copilot"
 authors = ["Ira Rainey <ira.rainey@microsoft.com>"]
 readme = "README.md"
@@ -17,6 +17,8 @@ semantic-kernel = "0.3.13.dev"
 asyncio = "^3.4.3"
 beautifulsoup4 = "^4.0.0"
 pyyaml = "^6.0.1"
+ruamel-yaml = "0.18.5"
+toml = "^0.10.2"
 
 [build-system]
 requires = ["poetry-core"]
