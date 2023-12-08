@@ -20,7 +20,9 @@ To install and use the Copilot extension you will need the following:
 
 To use the Copilot simply use the command `az copilot --prompt "your command prompt here"`. This will invoke the call to determine the most likely Azure CLI command to run based on the prompt you provide.
 
-The Azure CLI command will then be presented to you and you can choose to run it or not by pressing `y` or `return` confirm execution. This confirmation step can be overridden by setting the configuration setting `autorun = true`.
+The Azure CLI command will then be presented to you and you can choose to run it or not by pressing `y` or `return` confirm execution. This confirmation step can be overridden by setting the global configuration setting `autorun = true`, or at a single command level adding the option `--autorun` or `-a` which will override the global setting, such as: `az copilot --prompt "list all my resource groups in a table" -a`.
+
+> **WARNING:** *Care should be taken with autorun functionality as any commands usually requiring confirmation, such as deletion of resources, will auto confirm the action being performed.*
 
 ![List Resource Groups](https://raw.githubusercontent.com/irarainey/az-copilot/main/images/list_resource_groups.png)
 
@@ -45,14 +47,14 @@ Two additional configuration options are available for RAG. These are:
 
 These settings are given default values when the Copilot extension is installed. These are:
 
-- `--search-relevance-threshold = 0.5`
-- `--search-result-count = 5`
+- `--search-relevance-threshold 0.85`
+- `--search-result-count 7`
 
-If you wish to change these values, you can do so using the command `az copilot config set`. Special consideration should be given to the number of results returned, as the more results returned, the larger the resulting prompt being sent to the OpenAI service will be, which could then break the token limit.
+If you wish to change these values, you can do so using the command `az copilot config set`. Special consideration should be given to the number of results returned, as the more results returned, the larger the resulting prompt being sent to the OpenAI service will be, which could then break the token limit. Changing the relevance threshold change the accuracy of the results returned and hence the quality of the command generated.
 
 ### Command Flow Options
 
-The Copilot extension has several configuration options that can be used to control the flow of the command. These are:
+The Copilot extension has several global configuration options that can be used to control the flow of the command. These are:
 
 - `--autorun` - Automatically run the command when ready
 - `--show-command` - Show the Azure CLI command to be run
@@ -61,11 +63,11 @@ The Copilot extension has several configuration options that can be used to cont
 These are all boolean settings that can be set using the command `az copilot config set`.
 
 Default settings are:
-- `--autorun = false`
-- `--show-command = true`
-- `--enable-logging = false`.
+- `--autorun false`
+- `--show-command true`
+- `--enable-logging false`.
 
-If you are comfortable with the Copilot extension and want to speed up the flow, you can set `--autorun = true`. This will automatically run the command when ready.
+If you are comfortable with the Copilot extension and want to speed up the flow, you can set `--autorun true`. This will automatically run the command when ready.
 
 > **Note:** *Any command that requires a confirmation will also be automatically confirmed. This is to ensure the command flow is not interrupted, but can be dangerous if you are not sure what the command will do, or if it is destructive such as with a delete command.*
 
@@ -138,7 +140,7 @@ Command
     az copilot config set
 
 Arguments
-    --autorun -a                     : Boolean value to autorun the command when ready.
+    --autorun -a                     : Global boolean value to autorun the command when ready.
     --completion-name -cn            : The Azure OpenAI completion model deployment name.
     --embedding-name -en             : The Azure OpenAI embedding model deployment name.
     --enable-logging -l              : Boolean value to enable or disable logging.

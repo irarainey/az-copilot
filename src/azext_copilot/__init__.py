@@ -38,6 +38,13 @@ class CopilotCommandsLoader(AzCommandsLoader):
                 "to execute.",
                 required=True,
             )
+            # Define a single autorun argument
+            c.argument(
+                "autorun",
+                options_list=["--autorun", "-a"],
+                help="Boolean value to autorun the individual command when ready.",
+                required=False,
+            )
 
         # Create a new argument context for the copilot config set command
         with self.argument_context("copilot config set") as c:

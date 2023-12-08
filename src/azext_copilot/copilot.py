@@ -18,11 +18,12 @@ from azext_copilot.constants import (
 def invoke():
     parser = argparse.ArgumentParser()
     parser.add_argument("prompt", type=str)
+    parser.add_argument("autorun", type=bool, default=False, nargs="?")
     args = parser.parse_args()
-    copilot(args.prompt)
+    copilot(args.prompt, args.autorun)
 
 
-def copilot(prompt):
+def copilot(prompt, autorun=False):
     # Get configuration values
     config = read_config()
 
@@ -39,7 +40,7 @@ def copilot(prompt):
 
     # Set variables from config
     enable_logging = config[COPILOT_CONFIG_SECTION][ENABLE_LOGGING_CONFIG_KEY]
-    autorun = config[COPILOT_CONFIG_SECTION][AUTO_RUN_CONFIG_KEY]
+    should_autorun = autorun or config[COPILOT_CONFIG_SECTION][AUTO_RUN_CONFIG_KEY]
     show_command = config[COPILOT_CONFIG_SECTION][SHOW_COMMAND_CONFIG_KEY]
 
     # Check authentication
@@ -79,7 +80,7 @@ def copilot(prompt):
         response = engine.send_prompt(prompt)
 
     # If autorun is True just execute the command
-    if autorun is True:
+    if should_autorun is True:
         # Check if the user wants to see the command
         if show_command is True:
             print(f"\nCommand: {response[COMMAND_KEY]}")
@@ -101,9 +102,7 @@ def copilot(prompt):
         print(f"\nCommand: {response[COMMAND_KEY]}")
         print(f"Explanation: {response[EXPLANATION_KEY]}")
         run_command = (
-            input("\nDo you want to execute this command? (Y/n) ")
-            .lower()
-            .strip()
+            input("\nDo you want to execute this command? (Y/n) ").lower().strip()
         )
         # If the user wants to execute the command, do so
         if run_command == "y" or run_command == "":

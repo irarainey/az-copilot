@@ -4,8 +4,8 @@ from azext_copilot.version import get_version
 
 
 # This is the entry point for the AZ CLI extension to call the Copilot
-def copilot_cmd(prompt):
-    copilot(prompt)
+def copilot_cmd(prompt, autorun):
+    copilot(prompt, autorun)
 
 
 # This is the entry point for the AZ CLI extension to set the config
@@ -50,4 +50,3 @@ def show_config_cmd():
 
 def get_version_cmd():
     print(get_version())
-
