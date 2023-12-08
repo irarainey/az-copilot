@@ -25,9 +25,6 @@ resource openAI 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
 resource deployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01' = [for deployment in deployments: {
   parent: openAI
   name: deployment.name
-  sku: {
-    name: 'Standard'
-    capacity: 120
-  }
+  sku: deployment.sku
   properties: deployment.properties
 }]
